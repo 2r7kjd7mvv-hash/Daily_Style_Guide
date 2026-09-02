@@ -1,0 +1,215 @@
+@use '@/styles/variables.scss' as *;
+
+.pageWrap {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.header {
+  padding: $spacing-xl $page-padding 80rpx;
+  background: linear-gradient(135deg, #2BA471 0%, #4EC093 100%);
+  color: #fff;
+  position: relative;
+}
+
+.statsBar {
+  position: absolute;
+  left: $page-padding;
+  right: $page-padding;
+  bottom: -56rpx;
+  background: #FFFFFF;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: $shadow-card-hover;
+}
+
+.statItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 4rpx 0;
+  position: relative;
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 25%;
+    bottom: 25%;
+    width: 1rpx;
+    background: $color-divider;
+  }
+}
+
+.statNum {
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 4rpx solid rgba(255,255,255,0.4);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: $font-weight-bold;
+  color: #FFFFFF;
+  @include text-ellipsis;
+}
+
+.uid {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.78);
+}
+
+.vipTag {
+  align-self: flex-start;
+  margin-top: 4rpx;
+  padding: 4rpx 16rpx;
+  background: rgba(255,255,255,0.22);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-round;
+}
+
+.settingBtn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  @include flex-center;
+  transition: all $transition-fast;
+  &:active { background: rgba(255,255,255,0.28); transform: scale(0.92); }
+}
+
+.contentSection {
+  padding: 96rpx $page-padding 0;
+}
+
+.sectionCard {
+  background: #FFFFFF;
+  border-radius: $radius-lg;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 8rpx;
+  gap: $spacing-md;
+  position: relative;
+  border-bottom: 1rpx solid $color-divider;
+  transition: all $transition-fast;
+  &:last-child { border-bottom: none; }
+  &:active { background: #F7F9F8; margin: 0 -8rpx; padding-left: 16rpx; padding-right: 16rpx; }
+}
+
+.menuIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  background: linear-gradient(135deg, #F0FBF6 0%, #E6F6EE 100%);
+  @include flex-center;
+  flex-shrink: 0;
+}
+
+.menuContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.menuTitle {
+  font-size: 28rpx;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.menuDesc {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+}
+
+.menuArrow {
+  flex-shrink: 0;
+  color: $color-text-tertiary;
+}
+
+.menuBadge {
+  flex-shrink: 0;
+  padding: 4rpx 16rpx;
+  background: #FFF3EA;
+  color: #FF8A3D;
+  font-size: 22rpx;
+  border-radius: $radius-round;
+  font-weight: $font-weight-medium;
+}
+
+.logoutWrap {
+  padding: 40rpx $page-padding 0;
+}
+
+.logoutBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: #FFFFFF;
+  color: #F53F3F;
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+  &:active { transform: scale(0.99); background: #FFF5F5; }
+}
+
+.footer {
+  padding: $spacing-lg 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.footerText {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}

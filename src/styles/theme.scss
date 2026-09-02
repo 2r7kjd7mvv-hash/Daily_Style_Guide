@@ -1,0 +1,40 @@
+// ============================================
+// 主题配色变量 - 旅行薄荷绿（舒适/轻松/旅行）
+// ============================================
+
+// 品牌主题色（薄荷绿）
+$color-primary: #247C6D;
+$color-primary-light: #68A99B;
+$color-primary-dark: #185C51;
+
+// 渐变主题（Banner/按钮）
+$color-gradient-primary: linear-gradient(135deg, #247C6D 0%, #68A99B 100%);
+$color-gradient-banner: linear-gradient(135deg, #DDF1EB 0%, #F6F8F6 100%);
+
+// 辅助色（阳光橙 CTA 点缀）
+$color-accent: #F28C6B;
+$color-accent-light: #F7B19A;
+
+// 功能色
+$color-success: #2BA471;
+$color-warning: #FF8A3D;
+$color-error: #F53F3F;
+$color-info: #2BA471;
+
+// 背景色
+$color-bg-page: #F6F8F6;
+$color-bg-card: #FFFFFF;
+$color-bg-hover: #F0FBF6;
+$color-bg-tag: #F0FBF6;
+
+// 文本色
+$color-text-primary: #172321;
+$color-text-secondary: #697673;
+$color-text-tertiary: #8D9996;
+$color-text-disabled: #C9CDD4;
+$color-text-white: #FFFFFF;
+$color-text-tag: #2BA471;
+
+// 边框色
+$color-border: #E5E7EB;
+$color-divider: #F3F4F6;

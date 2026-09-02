@@ -1,0 +1,150 @@
+@use '@/styles/variables.scss' as *;
+
+.wrap {
+  width: 100%;
+}
+
+.title {
+  display: block;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.shortcuts {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.shortcutBtn {
+  @include button-reset;
+  padding: 0 24rpx;
+  height: 56rpx;
+  background: #F0FBF6;
+  color: $color-primary;
+  font-size: 24rpx;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-round;
+  transition: all $transition-fast;
+  &:active {
+    background: $color-gradient-primary;
+    color: #fff;
+  }
+}
+
+.pickerRow {
+  display: flex;
+  align-items: stretch;
+  gap: $spacing-sm;
+  background: $color-bg-card;
+  padding: $spacing-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.pickerCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.label {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  padding-left: 4rpx;
+}
+
+.pickerBtn {
+  @include button-reset;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4rpx;
+  padding: 16rpx 20rpx;
+  height: 96rpx;
+  background: #F7F9F8;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  &:active { background: #EAF5EF; }
+}
+
+.dateText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.weekText {
+  font-size: 22rpx;
+  color: $color-text-secondary;
+}
+
+.arrowCol {
+  width: 56rpx;
+  @include flex-center;
+  flex-shrink: 0;
+  padding-top: 28rpx;
+}
+
+.total {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+  margin-bottom: $spacing-md;
+  padding-left: 4rpx;
+}
+
+.totalLabel {
+  font-size: 24rpx;
+  color: $color-text-secondary;
+}
+
+.totalNum {
+  font-size: 44rpx;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  line-height: 1.1;
+}
+
+.timeline {
+  @include scroll-x-container;
+  padding: 20rpx 8rpx;
+  background: linear-gradient(90deg, #F0FBF6 0%, #FFFFFF 100%);
+  border-radius: $radius-lg;
+}
+
+.dayDot {
+  @include scroll-x-item(120rpx);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  margin: 0 8rpx;
+}
+
+.dayDotTop {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2BA471 0%, #4EC093 100%);
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: $font-weight-semibold;
+  @include flex-center;
+  box-shadow: $shadow-button;
+}
+
+.dayDate {
+  font-size: 22rpx;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}

@@ -1,0 +1,451 @@
+@use '@/styles/variables.scss' as *;
+
+.pageWrap {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.stepBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $page-padding;
+  background: linear-gradient(180deg, rgba(240,251,246,0.6) 0%, transparent 100%);
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.stepDot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #E5E7EB;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: $font-weight-semibold;
+  @include flex-center;
+  transition: all $transition-base;
+}
+
+.stepActive .stepDot {
+  background: $color-gradient-primary;
+  box-shadow: $shadow-button;
+}
+
+.stepDone .stepDot {
+  background: $color-primary;
+}
+
+.stepLine {
+  flex: 1;
+  height: 4rpx;
+  background: #E5E7EB;
+  margin: 0 12rpx;
+  border-radius: 2rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.stepActive .stepLine::after,
+.stepDone .stepLine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: $color-gradient-primary;
+}
+
+.stepLabel {
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-medium;
+}
+
+.stepActive .stepLabel {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.stepDone .stepLabel {
+  color: $color-primary;
+}
+
+.formSection {
+  padding: $spacing-lg $page-padding 160rpx;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.preferenceFields {
+  display: grid;
+  gap: 16rpx;
+  margin-top: 28rpx;
+}
+
+.preferenceInput {
+  height: 80rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid $color-border;
+  border-radius: $radius-md;
+  background: $color-bg-page;
+  color: $color-text-primary;
+  font-size: 26rpx;
+}
+
+.demoBadge {
+  margin: 0 0 16rpx;
+  padding: 8rpx 18rpx;
+  color: #9a563f;
+  background: rgba(242, 140, 107, 0.15);
+  border-radius: $radius-round;
+  font-size: 22rpx;
+}
+
+.formTitle {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: $spacing-md;
+}
+
+.formTitleIcon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 14rpx;
+  background: $color-gradient-primary;
+  @include flex-center;
+}
+
+.formTitleText {
+  font-size: 32rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.formDesc {
+  display: block;
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  margin: -8rpx 0 $spacing-md 60rpx;
+  line-height: 1.5;
+}
+
+.cityPickerRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: #F7F9F8;
+  border-radius: $radius-lg;
+  transition: all $transition-fast;
+  &:active { background: #EAF5EF; transform: scale(0.99); }
+}
+
+.cityIconBox {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  background: linear-gradient(135deg, #F0FBF6 0%, #E6F6EE 100%);
+  @include flex-center;
+  flex-shrink: 0;
+}
+
+.cityContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.cityTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.citySub {
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+}
+
+.autoLocateBtn {
+  @include button-reset;
+  padding: 10rpx 20rpx;
+  height: auto;
+  background: rgba(43, 164, 113, 0.1);
+  color: $color-primary;
+  font-size: 22rpx;
+  border-radius: $radius-round;
+  gap: 6rpx;
+  transition: all $transition-fast;
+  &:active {
+    background: $color-gradient-primary;
+    color: #fff;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(constant(safe-area-inset-bottom) + #{$spacing-md});
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-md});
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1rpx solid $color-divider;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  z-index: 100;
+  width: 100%;
+  max-width: 750rpx;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.primaryBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: $color-gradient-primary;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: $font-weight-bold;
+  border-radius: $radius-button;
+  box-shadow: $shadow-button;
+  transition: all $transition-fast;
+  &:active { transform: scale(0.98); opacity: 0.92; }
+  &:disabled {
+    background: #C9CDD4;
+    box-shadow: none;
+  }
+}
+
+.ghostBtn {
+  @include button-reset;
+  flex-shrink: 0;
+  height: $button-height-lg;
+  padding: 0 40rpx;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: 28rpx;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  border: 1rpx solid $color-border;
+  transition: all $transition-fast;
+  &:active { background: #F7F9F8; }
+}
+
+/* Step 2 Loading */
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx $page-padding;
+  min-height: 70vh;
+}
+
+.ringLoader {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: $color-gradient-primary;
+  position: relative;
+  margin-bottom: $spacing-xl;
+  animation: pulse 1.5s ease-in-out infinite;
+  box-shadow: $shadow-button;
+  @include flex-center;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 12rpx;
+    border-radius: 50%;
+    background: #FFFFFF;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.06); opacity: 0.9; }
+}
+
+.loadingIcon {
+  position: relative;
+  z-index: 2;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
+
+.loadingTitle {
+  font-size: 36rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: 16rpx;
+}
+
+.loadingDesc {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  text-align: center;
+  line-height: 1.7;
+  max-width: 560rpx;
+  margin-bottom: $spacing-xl;
+}
+
+.loadingSteps {
+  width: 100%;
+  max-width: 560rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.loadingStep {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+}
+
+.stepDoneBg {
+  background: #F0FBF6;
+}
+
+.loadingDot {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  @include flex-center;
+}
+
+.dotPending {
+  background: #F3F4F6;
+}
+
+.dotActive {
+  background: $color-gradient-primary;
+  animation: blink 0.8s ease-in-out infinite;
+}
+
+.dotDone {
+  background: $color-primary;
+}
+
+@keyframes blink {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.loadingStepText {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.activeStepText {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.doneStepText {
+  color: $color-primary;
+}
+
+/* Step3 结果 */
+.resultWrap {
+  padding: $spacing-lg $page-padding 240rpx;
+}
+
+.resultHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl 0;
+  margin-bottom: $spacing-md;
+}
+
+.successBadge {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: $color-gradient-primary;
+  @include flex-center;
+  box-shadow: $shadow-button;
+  margin-bottom: $spacing-md;
+}
+
+.resultTitle {
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: 12rpx;
+}
+
+.resultDesc {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  text-align: center;
+  max-width: 600rpx;
+  line-height: 1.6;
+}
+
+.summaryTagRow {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: $spacing-md;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.summaryTag {
+  padding: 8rpx 20rpx;
+  background: #F0FBF6;
+  color: $color-primary;
+  font-size: 22rpx;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-round;
+}
+
+.dailyTitleRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.dailyTitle {
+  font-size: 32rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.dailyCount {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}

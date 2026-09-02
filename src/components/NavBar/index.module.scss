@@ -1,0 +1,57 @@
+@use '@/styles/variables.scss' as *;
+
+.navWrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  padding-top: 88rpx;
+}
+
+.bgWhite {
+  background: $color-bg-card;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.navInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 88rpx;
+  padding: 0 $page-padding;
+}
+
+.leftSlot,
+.rightSlot {
+  width: 120rpx;
+  display: flex;
+  align-items: center;
+}
+
+.rightSlot {
+  justify-content: flex-end;
+}
+
+.backBtn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -16rpx;
+  transition: all $transition-fast;
+  &:active { opacity: 0.7; }
+}
+
+.title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titleText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}

@@ -1,0 +1,198 @@
+@use '@/styles/variables.scss' as *;
+
+.pageWrap {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.searchSection {
+  padding: 20rpx $page-padding $spacing-lg;
+  background: linear-gradient(180deg, $color-bg-card 0%, $color-bg-page 100%);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.searchBar {
+  flex: 1;
+  min-width: 0;
+  height: $button-height-md;
+  padding: 0 24rpx;
+  background: #FFFFFF;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  box-shadow: $shadow-card;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  color: $color-text-primary;
+  line-height: $button-height-md;
+}
+
+.searchPlace {
+  color: $color-text-tertiary;
+  font-size: 26rpx;
+}
+
+.filterBtn {
+  @include button-reset;
+  width: $button-height-md;
+  height: $button-height-md;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+  &:active { transform: scale(0.94); }
+}
+
+.chipRow {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.chip {
+  @include button-reset;
+  padding: 0 24rpx;
+  height: 56rpx;
+  background: #FFFFFF;
+  color: $color-text-secondary;
+  font-size: 24rpx;
+  border-radius: $radius-round;
+  border: 1rpx solid $color-border;
+  transition: all $transition-fast;
+}
+
+.chipActive {
+  background: $color-gradient-primary;
+  color: #FFFFFF;
+  border-color: $color-primary;
+  box-shadow: $shadow-button;
+  font-weight: $font-weight-medium;
+}
+
+.listSection {
+  padding: 0 $page-padding;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.subTitle {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  margin-left: 12rpx;
+  font-weight: $font-weight-normal;
+}
+
+.sortBtn {
+  @include button-reset;
+  padding: 0 20rpx;
+  height: 48rpx;
+  background: #FFFFFF;
+  color: $color-text-secondary;
+  font-size: 24rpx;
+  border-radius: $radius-round;
+  gap: 6rpx;
+}
+
+.filterPanel {
+  padding: $spacing-md $page-padding;
+  background: #FFFFFF;
+  border-bottom: 1rpx solid $color-divider;
+  margin: 0 $page-padding $spacing-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+.filterGroup {
+  margin-bottom: $spacing-md;
+  &:last-child { margin-bottom: 0; }
+}
+
+.filterLabel {
+  display: block;
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  margin-bottom: 16rpx;
+  font-weight: $font-weight-medium;
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.fChip {
+  @include button-reset;
+  padding: 0 20rpx;
+  height: 52rpx;
+  background: #F7F9F8;
+  color: $color-text-secondary;
+  font-size: 22rpx;
+  border-radius: $radius-round;
+  transition: all $transition-fast;
+}
+
+.fChipActive {
+  background: #F0FBF6;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.filterFoot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16rpx;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.resetBtn {
+  @include button-reset;
+  height: 64rpx;
+  padding: 0 32rpx;
+  background: #F7F9F8;
+  color: $color-text-secondary;
+  font-size: 26rpx;
+  border-radius: $radius-button;
+}
+
+.confirmBtn {
+  @include button-reset;
+  height: 64rpx;
+  padding: 0 40rpx;
+  background: $color-gradient-primary;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  box-shadow: $shadow-button;
+}

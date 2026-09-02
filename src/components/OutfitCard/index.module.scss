@@ -1,0 +1,203 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+  &:active {
+    transform: scale(0.99);
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.activeCard {
+  border: 2rpx solid $color-primary;
+  background: linear-gradient(180deg, #F0FBF6 0%, #FFFFFF 40%);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.dateTag {
+  display: inline-flex;
+  padding: 6rpx 16rpx;
+  background: $color-bg-tag;
+  border-radius: $radius-round;
+  align-self: flex-start;
+}
+
+.activeTag {
+  background: $color-gradient-primary;
+  .dateText { color: #fff; font-weight: $font-weight-medium; }
+}
+
+.dateText {
+  font-size: 24rpx;
+  color: $color-text-tag;
+  font-weight: $font-weight-medium;
+}
+
+.dest {
+  font-size: 24rpx;
+  color: $color-text-secondary;
+  margin-left: 4rpx;
+}
+
+.weatherBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.weather {
+  font-size: 26rpx;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.temp {
+  font-size: 24rpx;
+  color: $color-text-secondary;
+}
+
+.body {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.imgCol {
+  position: relative;
+  flex-shrink: 0;
+  width: 240rpx;
+  height: 320rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $color-bg-tag;
+}
+
+.imgCol > view { height: 100%; padding: 18rpx 10rpx; }
+
+.img {
+  width: 100%;
+  height: 100%;
+  background: #F0FBF6;
+}
+
+.starTag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12rpx 16rpx;
+  background: linear-gradient(0deg, rgba(43,164,113,0.9) 0%, rgba(43,164,113,0.5) 100%);
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: $font-weight-semibold;
+  text-align: center;
+}
+
+.infoCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.itemRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+
+.itemLabel {
+  flex-shrink: 0;
+  width: 64rpx;
+  padding: 4rpx 0;
+  background: $color-bg-tag;
+  color: $color-text-tag;
+  font-size: 22rpx;
+  text-align: center;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+}
+
+.itemVal {
+  flex: 1;
+  font-size: 24rpx;
+  color: $color-text-primary;
+  line-height: 1.5;
+  @include text-ellipsis-multi(2);
+}
+
+.feelingTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 4rpx;
+  padding: 8rpx 14rpx;
+  background: #F0FBF6;
+  border-radius: $radius-round;
+  align-self: flex-start;
+}
+
+.feelingText {
+  font-size: 22rpx;
+  color: $color-text-tag;
+  font-weight: $font-weight-medium;
+}
+
+.reminderBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+  background: #FFF8F1;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+}
+
+.reminderText {
+  flex: 1;
+  font-size: 24rpx;
+  color: #A15C1A;
+  line-height: 1.5;
+}
+
+.reasonBox {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 20rpx;
+  background: #F7F9F8;
+  border-radius: $radius-md;
+}
+
+.reasonLabel {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-medium;
+}
+
+.reasonText {
+  flex: 1;
+  font-size: 24rpx;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}

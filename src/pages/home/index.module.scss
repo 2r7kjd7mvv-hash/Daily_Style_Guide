@@ -1,0 +1,161 @@
+@use '@/styles/variables.scss' as *;
+
+.pageWrap {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx $page-padding 0;
+  margin-bottom: $spacing-lg;
+}
+
+.locationBtn {
+  @include button-reset;
+  flex-direction: row;
+  gap: 8rpx;
+  padding: 12rpx 24rpx 12rpx 12rpx;
+  height: auto;
+  background: #FFFFFF;
+  border-radius: $radius-round;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+  &:active { transform: scale(0.98); }
+}
+
+.locIcon {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: $color-gradient-primary;
+  @include flex-center;
+  flex-shrink: 0;
+}
+
+.locText {
+  font-size: 26rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  max-width: 360rpx;
+  @include text-ellipsis;
+}
+
+.locArrow {
+  color: $color-text-tertiary;
+}
+
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.iconBtn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  @include flex-center;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+  &:active { transform: scale(0.92); opacity: 0.9; }
+}
+
+.sectionWrap {
+  padding: 0 $page-padding;
+  margin-bottom: $spacing-xl;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  white-space: nowrap;
+}
+
+.moreBtn {
+  @include button-reset;
+  padding: 0 16rpx;
+  height: 48rpx;
+  color: $color-text-tertiary;
+  font-size: 24rpx;
+  border-radius: $radius-round;
+  transition: all $transition-fast;
+  &:active { background: #F0FBF6; color: $color-primary; }
+}
+
+.quickEntryRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: #FFFFFF;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-xl;
+}
+
+.entryItem {
+  @include button-reset;
+  flex-direction: column;
+  gap: 12rpx;
+  background: transparent;
+  padding: 8rpx 0;
+  transition: all $transition-fast;
+  &:active { transform: translateY(-4rpx); }
+}
+
+.entryIcon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #F0FBF6 0%, #E6F6EE 100%);
+  @include flex-center;
+  margin-bottom: 4rpx;
+}
+
+.entryText {
+  font-size: 24rpx;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.latestCard {
+  margin-top: $spacing-md;
+}
+
+.greetingBox {
+  margin-bottom: $spacing-lg;
+  padding: 0 4rpx;
+}
+
+.greetingTitle {
+  display: block;
+  font-size: 44rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: 1.25;
+  margin-bottom: 12rpx;
+}
+
+.greetingDesc {
+  display: block;
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.highlight {
+  color: $color-primary;
+}

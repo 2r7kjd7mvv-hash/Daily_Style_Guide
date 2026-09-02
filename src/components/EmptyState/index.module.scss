@@ -1,0 +1,60 @@
+@use '@/styles/variables.scss' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 48rpx;
+}
+
+.compact { padding: 48rpx 24rpx; }
+
+.iconBox {
+  margin-bottom: $spacing-lg;
+  opacity: 0.9;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 16rpx;
+}
+
+.desc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: $spacing-xl;
+  max-width: 480rpx;
+}
+
+.actionBtn {
+  @include button-reset;
+  min-width: 240rpx;
+  height: $button-height-md;
+  padding: 0 40rpx;
+  background: $color-gradient-primary;
+  color: #fff;
+  border-radius: $radius-button;
+  box-shadow: $shadow-button;
+  transition: all $transition-fast;
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.actionText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #fff;
+}
+
+.secondaryBtn {
+  margin-top: 20rpx;
+  color: $color-primary;
+  font-size: $font-size-sm;
+}

@@ -1,0 +1,80 @@
+@use '@/styles/variables.scss' as *;
+
+.wrap {
+  width: 100%;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+}
+
+.swiper {
+  width: 100%;
+}
+
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.55) 100%);
+}
+
+.content {
+  position: absolute;
+  inset: 0;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 2;
+}
+
+.textContent {
+  margin-bottom: 24rpx;
+}
+
+.title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: 8rpx;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.25);
+}
+
+.desc {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.5;
+}
+
+.ctaBtn {
+  @include button-reset;
+  width: 280rpx;
+  height: $button-height-md;
+  background: $color-gradient-primary;
+  color: $color-text-white;
+  font-size: 28rpx;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  box-shadow: $shadow-button;
+  transition: all $transition-fast;
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

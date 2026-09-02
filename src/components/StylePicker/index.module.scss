@@ -1,0 +1,80 @@
+@use '@/styles/variables.scss' as *;
+
+.wrap {
+  width: 100%;
+}
+
+.title {
+  display: block;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.item {
+  @include button-reset;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 24rpx;
+  background: $color-bg-card;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-lg;
+  min-height: 140rpx;
+  transition: all $transition-base;
+  box-shadow: none;
+
+  &:active { transform: scale(0.98); }
+}
+
+.itemActive {
+  background: linear-gradient(135deg, rgba(43,164,113,0.08) 0%, rgba(78,192,147,0.05) 100%);
+  border-color: $color-primary;
+  box-shadow: 0 2rpx 12rpx rgba(43,164,113,0.15);
+}
+
+.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.itemHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.itemActive .label {
+  color: $color-primary;
+}
+
+.desc {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  line-height: 1.5;
+}
+
+.check {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: $color-gradient-primary;
+  @include flex-center;
+}

@@ -1,0 +1,106 @@
+@use '@/styles/variables.scss' as *;
+
+.wrap {
+  width: 100%;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #EDF1EE 25%,
+    #F6F8F7 37%,
+    #EDF1EE 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: $radius-sm;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.outfitSkeleton {
+  padding: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: $spacing-md;
+}
+
+.tag {
+  width: 180rpx;
+  height: 36rpx;
+  border-radius: $radius-round;
+}
+
+.tagSm {
+  width: 100rpx;
+  height: 28rpx;
+  border-radius: $radius-round;
+}
+
+.contentRow {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.thumb {
+  flex-shrink: 0;
+  width: 240rpx;
+  height: 320rpx;
+  border-radius: $radius-md;
+}
+
+.thumbSm {
+  flex-shrink: 0;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: $radius-md;
+}
+
+.infoCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.line {
+  height: 28rpx;
+  width: 90%;
+}
+
+.lineSm {
+  height: 24rpx;
+  width: 75%;
+}
+
+.lineXs {
+  height: 24rpx;
+  width: 50%;
+}
+
+.banner {
+  height: 380rpx;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+}
+
+.listItemSkeleton {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-sm;
+}
