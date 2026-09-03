@@ -98,4 +98,8 @@ export async function handleRequest(
   return json({ message: 'Not found' }, 404, origin);
 }
 
-export default { fetch: handleRequest };
+export default {
+  fetch(request: Request, env: WorkerEnv, _ctx: ExecutionContext) {
+    return handleRequest(request, env);
+  },
+};
