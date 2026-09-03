@@ -67,8 +67,34 @@ describe('normalizeWorkflowContent', () => {
     expect(normalizeWorkflowContent(content)[0]).toMatchObject({
       city: '巴黎',
       top: '针织衫',
-      image_url: undefined,
     });
+    expect(normalizeWorkflowContent(content)[0].image_url).toMatch(/^data:image\/svg\+xml/);
+  });
+
+  it('turns a Coze image prompt into a directly viewable strategy image', () => {
+    const content = JSON.stringify({
+      date_list: ['2026-09-03'],
+      image_url_list: [JSON.stringify({
+        image_url: 'Full body shot of a traveler in minimal city style',
+        reasoning_content: '简约舒适，适合城市漫步',
+      })],
+      output_list: [{
+        date: '2026-09-03',
+        city: '巴黎',
+        weather: '多云',
+        temperature: '16℃~24℃',
+        top: '米白色针织衫',
+        bottom: '卡其色直筒裤',
+        outerwear: '浅灰色风衣',
+        shoes: '白色乐福鞋',
+        accessories: '金色耳饰',
+      }],
+    });
+
+    const daily = normalizeWorkflowContent(content)[0];
+    expect(daily.image_url).toMatch(/^data:image\/svg\+xml/);
+    expect(decodeURIComponent(daily.image_url || '')).toContain('巴黎');
+    expect(decodeURIComponent(daily.image_url || '')).toContain('米白色针织衫');
   });
 
   it('rejects malformed workflow output with a recoverable message', () => {

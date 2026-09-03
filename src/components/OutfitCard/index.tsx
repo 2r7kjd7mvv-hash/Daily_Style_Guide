@@ -3,7 +3,6 @@ import { View, Text, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import type { DailyOutfit } from '@/types';
-import EmptyState from '@/components/EmptyState';
 
 export interface OutfitCardProps {
   planId?: string;
@@ -31,7 +30,17 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   onClick
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
-  useEffect(() => setImageFailed(false), [daily.image_url]);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  useEffect(() => {
+    setImageFailed(false);
+    setImageLoaded(false);
+  }, [daily.image_url]);
+
+  const previewImage = (event: { stopPropagation: () => void }) => {
+    event.stopPropagation();
+    if (!daily.image_url || imageFailed) return;
+    Taro.previewImage({ current: daily.image_url, urls: [daily.image_url] }).catch(console.error);
+  };
   const handleClick = () => {
     if (onClick) return onClick();
     if (planId) {
@@ -68,16 +77,28 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
       </View>
 
       <View className={styles.body}>
-        <View className={styles.imgCol}>
+        <View className={styles.imgCol} onClick={previewImage}>
           {daily.image_url && !imageFailed ? (
-            <Image
-              className={styles.img}
-              src={daily.image_url}
-              mode="aspectFill"
-              onError={() => setImageFailed(true)}
-            />
+            <>
+              {!imageLoaded && <View className={styles.imageSkeleton} />}
+              <Image
+                className={`${styles.img} ${imageLoaded ? styles.imageVisible : ''}`}
+                src={daily.image_url}
+                mode="aspectFill"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageFailed(true)}
+              />
+              {imageLoaded && <View className={styles.previewTag}>点击查看</View>}
+            </>
           ) : (
-            <EmptyState compact title="图片暂未生成" desc="文字穿搭方案仍可正常查看" />
+            <View className={styles.strategyFallback}>
+              <Text className={styles.fallbackEyebrow}>穿搭策略</Text>
+              <Text className={styles.fallbackTitle}>{daily.city || destination || '旅行穿搭'}</Text>
+              <View className={styles.fallbackLine} />
+              <Text className={styles.fallbackItem}>{daily.top || '舒适上装'}</Text>
+              <Text className={styles.fallbackItem}>{daily.bottom || '轻松下装'}</Text>
+              <Text className={styles.fallbackHint}>完整方案可继续查看</Text>
+            </View>
           )}
           {isActiveDay && <View className={styles.starTag}>明星同款解码</View>}
         </View>
