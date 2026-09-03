@@ -1,4 +1,5 @@
 import type { CityInfo } from '@/types';
+import { getApiBaseUrl } from './runtimeConfig';
 
 interface NominatimAddress {
   state?: string;
@@ -53,7 +54,7 @@ function getCoordinates() {
 }
 
 export async function locateCurrentCity(): Promise<CityInfo> {
-  const baseUrl = process.env.TARO_APP_API_BASE_URL?.replace(/\/$/, '');
+  const baseUrl = getApiBaseUrl();
   if (!baseUrl) throw new Error('尚未配置定位服务，请手动选择城市');
   const coords = await getCoordinates();
   const response = await fetch(`${baseUrl}/api/location/reverse`, {

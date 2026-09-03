@@ -6,6 +6,7 @@ import type {
   WorkflowStreamEvent,
 } from '@/types';
 import { OUTFIT_PLAN_LIST } from '../data/outfitList';
+import { getApiBaseUrl } from './runtimeConfig';
 
 export interface WorkflowDraft {
   destination: CityInfo;
@@ -139,7 +140,7 @@ export async function generateOutfitPlan(
   request: WorkflowGenerateRequest,
   handlers: GenerateHandlers = {},
 ): Promise<{ source: 'live' | 'demo'; dailyList: DailyOutfit[] }> {
-  const baseUrl = process.env.TARO_APP_API_BASE_URL?.replace(/\/$/, '');
+  const baseUrl = getApiBaseUrl();
   if (!baseUrl) {
     handlers.onEvent?.({ event: 'Message', data: { node_title: '天气分析' } });
     await new Promise((resolve) => setTimeout(resolve, 500));
