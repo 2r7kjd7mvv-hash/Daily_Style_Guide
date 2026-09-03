@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="旅行者头像">
+  <defs>
+    <linearGradient id="sky" x1="28" y1="18" x2="176" y2="188" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E7F7F1"/>
+      <stop offset="1" stop-color="#BFE6D8"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="100" fill="url(#sky)"/>
+  <path d="M18 151h25v-24h13v24h18v-34h20v34h20v-19h13v19h16v-43h24v43h17v49H18z" fill="#247C6D" opacity=".18"/>
+  <circle cx="156" cy="45" r="16" fill="#F5B76B" opacity=".9"/>
+  <path d="M57 187c2-40 19-61 48-61s47 21 49 61" fill="#247C6D"/>
+  <path d="M74 187c1-29 11-48 31-56 20 8 31 27 32 56" fill="#F5B76B"/>
+  <path d="M128 142c19 2 27 18 25 43h-17c1-17-3-28-14-33z" fill="#1F685D"/>
+  <circle cx="105" cy="92" r="38" fill="#F2C8A8"/>
+  <path d="M70 88c2-31 15-47 39-47 25 0 37 20 35 49-10-7-18-16-23-28-10 16-27 26-51 26z" fill="#3F3A36"/>
+  <path d="M63 59c13-22 31-33 53-30 19 2 33 12 43 29-30 7-63 7-96 1z" fill="#F7F3EA"/>
+  <path d="M82 43c8-12 19-18 34-16 13 1 23 7 31 19-21 5-43 4-65-3z" fill="#FF8A5B"/>
+  <path d="M84 102c5 7 12 10 21 10 10 0 17-3 22-10" fill="none" stroke="#9B5A48" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="91" cy="91" r="3" fill="#3F3A36"/>
+  <circle cx="120" cy="91" r="3" fill="#3F3A36"/>
+  <path d="M81 139c15 10 31 10 47 0" fill="none" stroke="#FFF9EF" stroke-width="8" stroke-linecap="round"/>
+</svg>

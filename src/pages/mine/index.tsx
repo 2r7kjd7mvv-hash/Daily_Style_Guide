@@ -6,12 +6,9 @@ import EmptyState from '@/components/EmptyState';
 import { login, getOutfitPlans } from '@/services/outfit';
 import { useAppStore } from '@/store/useAppStore';
 import type { UserInfo } from '@/types';
+import travelerAvatar from '@/assets/traveler-avatar.svg';
 
-const AVATAR_DEFAULT =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23F0FBF6'/><circle cx='100' cy='80' r='36' fill='%232BA471'/><path d='M30 200 Q30 140 100 140 Q170 140 170 200' fill='%234EC093'/></svg>`
-  );
+const AVATAR_DEFAULT = travelerAvatar;
 
 const MinePage: React.FC = () => {
   const { user, setUser } = useAppStore();

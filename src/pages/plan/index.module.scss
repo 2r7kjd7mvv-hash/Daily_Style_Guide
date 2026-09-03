@@ -75,7 +75,52 @@
 }
 
 .formSection {
-  padding: $spacing-lg $page-padding 160rpx;
+  padding: $spacing-lg $page-padding 72rpx;
+}
+
+.formActions {
+  display: grid;
+  gap: 16rpx;
+  padding-top: 4rpx;
+}
+
+.nextBtn,
+.clearBtn {
+  @include button-reset;
+  width: 100%;
+  border-radius: $radius-button;
+}
+
+.nextBtn {
+  height: $button-height-lg;
+  background: $color-gradient-primary;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: $font-weight-bold;
+  box-shadow: $shadow-button;
+  transition: transform $transition-fast, opacity $transition-fast;
+
+  &:active { transform: scale(0.99); }
+  &:disabled {
+    background: #C9CDD4;
+    box-shadow: none;
+  }
+}
+
+.clearBtn {
+  height: 76rpx;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: 26rpx;
+  border: 1rpx solid $color-border;
+}
+
+.nextHint {
+  display: block;
+  color: $color-text-tertiary;
+  font-size: 22rpx;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .card {

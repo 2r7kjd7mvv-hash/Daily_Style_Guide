@@ -13,6 +13,7 @@ import { STYLE_OPTIONS } from '@/types';
 import type { OutfitPlan, CityInfo } from '@/types';
 import { buildWorkflowRequest, generateOutfitPlan } from '@/services/coze';
 import EmptyState from '@/components/EmptyState';
+import { getTripStepAction } from './planFlow';
 
 type Step = 1 | 2 | 3;
 
@@ -76,9 +77,16 @@ const PlanPage: React.FC = () => {
 
   const handleAutoLocate = () => goCityPicker();
 
-  const canGoStep2 = useMemo(() => {
-    return destination && draftStartDate && draftEndDate && draftStyle;
+  const tripStepAction = useMemo(() => {
+    return getTripStepAction({
+      hasDestination: Boolean(destination),
+      startDate: draftStartDate,
+      endDate: draftEndDate,
+      style: draftStyle,
+    });
   }, [destination, draftStartDate, draftEndDate, draftStyle]);
+
+  const canGoStep2 = !tripStepAction.disabled;
 
   const handleGoStep2 = async () => {
     if (!canGoStep2) {
@@ -273,6 +281,20 @@ const PlanPage: React.FC = () => {
               <Input className={styles.preferenceInput} value={draftAvoid} placeholder="不想穿的单品（选填）" onInput={(e) => setDraftAvoid(e.detail.value)} />
             </View>
           </View>
+
+          <View className={styles.formActions}>
+            <Button className={styles.clearBtn} onClick={handleReset}>
+              清空重选
+            </Button>
+            <Button
+              className={styles.nextBtn}
+              disabled={tripStepAction.disabled}
+              onClick={handleGoStep2}
+            >
+              {tripStepAction.label}
+            </Button>
+            <Text className={styles.nextHint}>下一步将结合天气与偏好生成每日穿搭</Text>
+          </View>
         </View>
       )}
 
@@ -392,21 +414,6 @@ const PlanPage: React.FC = () => {
       )}
 
       {/* 底部按钮 */}
-      {step === 1 && (
-        <View className={styles.bottomBar}>
-          <Button className={styles.ghostBtn} onClick={handleReset}>
-            清空重选
-          </Button>
-          <Button
-            className={styles.primaryBtn}
-            disabled={!canGoStep2}
-            onClick={handleGoStep2}
-          >
-            开始设计穿搭
-          </Button>
-        </View>
-      )}
-
       {step === 3 && (
         <View className={styles.bottomBar}>
           <Button className={styles.ghostBtn} onClick={handleReset}>
