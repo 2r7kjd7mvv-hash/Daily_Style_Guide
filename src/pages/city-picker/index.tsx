@@ -7,6 +7,7 @@ import { DEFAULT_CITY } from '@/data/banners';
 import { useAppStore } from '@/store/useAppStore';
 import { locateCurrentCity } from '@/services/location';
 import type { CityInfo } from '@/types';
+import { buildPlanReturnUrl } from './citySelection';
 
 // 省市区 mock 数据（简化版，用于演示美团式三级联动）
 const PROVINCE_DATA: Array<{
@@ -158,7 +159,9 @@ const CityPickerPage: React.FC = () => {
     }
     setTimeout(() => {
       if (fromPlan) {
-        Taro.navigateBack().catch(() => undefined);
+        Taro.redirectTo({ url: buildPlanReturnUrl(c) }).catch(() => {
+          Taro.navigateTo({ url: buildPlanReturnUrl(c) }).catch(() => undefined);
+        });
       } else {
         Taro.switchTab({ url: '/pages/home/index' }).catch(() => {
           Taro.navigateBack().catch(() => undefined);
