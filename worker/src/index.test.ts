@@ -57,6 +57,26 @@ describe('Cloudflare Worker', () => {
     expect(await response.text()).toContain('event: Done');
   });
 
+  it('removes clipboard whitespace from the Coze token before authorization', async () => {
+    const upstream = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      expect(init?.headers).toMatchObject({ Authorization: 'Bearer rotated-secret' });
+      return new Response('event: Done\ndata: {}\n\n');
+    });
+    const request = new Request('https://worker.test/api/outfit/generate', {
+      method: 'POST',
+      headers: { Origin: origin, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        workflow_id: '7680787686953058346',
+        parameters: {
+          city: '巴黎', province: '法兰西岛', towns: '巴黎', villages: '巴黎',
+          start_time: '2026.9.2', end_time: '2026.9.4',
+        },
+      }),
+    });
+
+    await handleRequest(request, { COZE_API_TOKEN: '  rotated-\n\tsecret\r' }, upstream);
+  });
+
   it('rejects an untrusted browser origin', async () => {
     const request = new Request('https://worker.test/api/outfit/generate', {
       method: 'POST',

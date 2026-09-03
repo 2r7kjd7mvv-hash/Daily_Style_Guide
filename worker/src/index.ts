@@ -59,7 +59,7 @@ export async function handleRequest(
     const upstream = await fetcher('https://api.coze.cn/v1/workflow/stream_run', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${env.COZE_API_TOKEN}`,
+        Authorization: `Bearer ${env.COZE_API_TOKEN.replace(/[\s\u0000-\u001F\u007F]+/g, '')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
