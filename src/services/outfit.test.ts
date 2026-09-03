@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { filterAndSortPlans } from './outfitQuery';
+import * as outfitQuery from './outfitQuery';
 import type { OutfitPlan } from '@/types';
 
 const plans: OutfitPlan[] = [
@@ -43,5 +44,17 @@ describe('filterAndSortPlans', () => {
       start_date_from: '2026-09-01',
       start_date_to: '2026-09-03',
     })).toEqual([]);
+  });
+});
+
+describe('canPreviewOutfitImage', () => {
+  it('does not capture a card click when the image failed to load', () => {
+    const canPreview = (outfitQuery as unknown as {
+      canPreviewOutfitImage: (url: string | undefined, failed: boolean) => boolean;
+    }).canPreviewOutfitImage;
+
+    expect(canPreview('https://example.com/look.webp', true)).toBe(false);
+    expect(canPreview('https://example.com/look.webp', false)).toBe(true);
+    expect(canPreview(undefined, false)).toBe(false);
   });
 });

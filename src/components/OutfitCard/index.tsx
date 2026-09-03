@@ -3,6 +3,7 @@ import { View, Text, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import type { DailyOutfit } from '@/types';
+import { canPreviewOutfitImage } from '@/services/outfitQuery';
 
 export interface OutfitCardProps {
   planId?: string;
@@ -37,9 +38,10 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   }, [daily.image_url]);
 
   const previewImage = (event: { stopPropagation: () => void }) => {
+    const imageUrl = daily.image_url;
+    if (!canPreviewOutfitImage(imageUrl, imageFailed)) return;
     event.stopPropagation();
-    if (!daily.image_url || imageFailed) return;
-    Taro.previewImage({ current: daily.image_url, urls: [daily.image_url] }).catch(console.error);
+    Taro.previewImage({ current: imageUrl, urls: [imageUrl] }).catch(console.error);
   };
   const handleClick = () => {
     if (onClick) return onClick();

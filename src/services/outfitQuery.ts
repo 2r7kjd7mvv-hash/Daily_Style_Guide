@@ -10,6 +10,13 @@ export interface OutfitQuery {
   pageSize?: number;
 }
 
+export function canPreviewOutfitImage(
+  imageUrl: string | undefined,
+  imageFailed: boolean,
+): imageUrl is string {
+  return Boolean(imageUrl && !imageFailed);
+}
+
 export function filterAndSortPlans(plans: OutfitPlan[], query: OutfitQuery) {
   const keyword = query.destination_keyword?.trim().toLocaleLowerCase();
   return plans
