@@ -13,7 +13,7 @@ import { STYLE_OPTIONS } from '@/types';
 import type { OutfitPlan, CityInfo } from '@/types';
 import { buildWorkflowRequest, generateOutfitPlan } from '@/services/coze';
 import EmptyState from '@/components/EmptyState';
-import { getTripStepAction } from './planFlow';
+import { getForecastMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
 
 type Step = 1 | 2 | 3;
 
@@ -98,11 +98,9 @@ const PlanPage: React.FC = () => {
       Taro.showToast({ title: tips, icon: 'none' });
       return;
     }
-    const duration = Math.round(
-      (new Date(draftEndDate).getTime() - new Date(draftStartDate).getTime()) / 86400000,
-    ) + 1;
-    if (duration < 1 || duration > 14) {
-      Taro.showToast({ title: '旅行周期请选择 1–14 天', icon: 'none' });
+    const dateError = validateTravelDates(draftStartDate, draftEndDate);
+    if (dateError) {
+      Taro.showToast({ title: dateError, icon: 'none' });
       return;
     }
     setStep(2);
@@ -269,6 +267,8 @@ const PlanPage: React.FC = () => {
               endDate={draftEndDate}
               onChange={setDraftDate}
               minDate={new Date().toISOString().slice(0, 10)}
+              maxDate={getForecastMaxDate()}
+              maxRangeDays={6}
             />
           </View>
 
