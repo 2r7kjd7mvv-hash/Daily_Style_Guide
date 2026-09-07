@@ -252,9 +252,10 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-top: 1rpx solid $color-divider;
-  display: flex;
+  display: grid;
+  grid-template-columns: 0.9fr 1.7fr;
+  gap: 20rpx;
   align-items: center;
-  gap: $spacing-md;
   z-index: 100;
   width: 100%;
   max-width: 750rpx;
@@ -264,7 +265,7 @@
 
 .primaryBtn {
   @include button-reset;
-  flex: 1;
+  width: 100%;
   height: $button-height-lg;
   background: $color-gradient-primary;
   color: #FFFFFF;
@@ -272,25 +273,29 @@
   font-weight: $font-weight-bold;
   border-radius: $radius-button;
   box-shadow: $shadow-button;
+  cursor: pointer;
   transition: all $transition-fast;
   &:active { transform: scale(0.98); opacity: 0.92; }
-  &:disabled {
-    background: #C9CDD4;
-    box-shadow: none;
-  }
+}
+
+.btnDisabled {
+  background: #C9CDD4;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: not-allowed;
 }
 
 .secondaryBtn {
   @include button-reset;
-  flex-shrink: 0;
+  width: 100%;
   height: $button-height-lg;
-  padding: 0 44rpx;
   background: #F3F4F6;
   color: $color-text-secondary;
   font-size: 28rpx;
   font-weight: $font-weight-medium;
   border-radius: $radius-button;
   border: 1rpx solid $color-border;
+  cursor: pointer;
   transition: all $transition-fast;
   &:active { background: #E5E7EB; }
 }

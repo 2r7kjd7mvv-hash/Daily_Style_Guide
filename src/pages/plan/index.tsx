@@ -425,17 +425,15 @@ const PlanPage: React.FC = () => {
       {/* 底部按钮：保存穿搭为主、重新设计为辅 */}
       {step === 3 && (
         <View className={styles.bottomBar}>
-          <Button className={styles.secondaryBtn} onClick={handleReset}>
+          <View className={styles.secondaryBtn} onClick={handleReset}>
             重新设计
-          </Button>
-          <Button
-            className={styles.primaryBtn}
-            loading={saving}
-            disabled={saving || !draftDailyList.length}
-            onClick={handleSave}
+          </View>
+          <View
+            className={`${styles.primaryBtn} ${saving || !draftDailyList.length ? styles.btnDisabled : ''}`}
+            onClick={() => !saving && draftDailyList.length > 0 && handleSave()}
           >
-            保存穿搭
-          </Button>
+            {saving ? '保存中…' : '保存穿搭'}
+          </View>
         </View>
       )}
     </View>
