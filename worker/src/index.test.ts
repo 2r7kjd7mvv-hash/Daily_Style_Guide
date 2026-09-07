@@ -209,6 +209,20 @@ describe('Cloudflare Worker', () => {
     expect(response.status).toBe(200);
   });
 
+  it('allows the 127.0.0.1 local dev origin', async () => {
+    const upstream = createGenerateFetcher();
+    const request = new Request('https://worker.test/api/outfit/generate', {
+      method: 'POST',
+      headers: { Origin: 'http://127.0.0.1:10086', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        workflow_id: '7680787686953058346',
+        parameters: dayParams,
+      }),
+    });
+    const response = await handleRequest(request, { COZE_API_TOKEN: 'secret' }, upstream);
+    expect(response.status).toBe(200);
+  });
+
   it('rejects an untrusted browser origin', async () => {
     const request = new Request('https://worker.test/api/outfit/generate', {
       method: 'POST',

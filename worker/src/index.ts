@@ -11,6 +11,7 @@ type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<Respons
 const ALLOWED_ORIGINS = new Set([
   'https://2r7kjd7mvv-hash.github.io',
   'http://localhost:10086',
+  'http://127.0.0.1:10086',
   'http://localhost:3000',
 ]);
 
