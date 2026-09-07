@@ -1,5 +1,6 @@
 import { resolveForecast } from './weather';
 import type { ForecastParameters } from './weather';
+import { buildBatchedStream } from './fanout';
 
 export interface WorkerEnv {
   COZE_API_TOKEN: string;
@@ -71,6 +72,27 @@ export async function handleRequest(
       const message = error instanceof Error ? error.message : '天气服务暂不可用';
       const status = message.includes('暂不可用') ? 502 : 422;
       return json({ message }, status, origin);
+    }
+    if (weatherData.length > 1) {
+      try {
+        const stream = await buildBatchedStream({
+          parameters: body.parameters,
+          forecast: weatherData,
+          token: env.COZE_API_TOKEN,
+          fetcher,
+        });
+        return new Response(stream, {
+          status: 200,
+          headers: {
+            ...cors(origin),
+            'Content-Type': 'text/event-stream; charset=utf-8',
+            'Cache-Control': 'no-store',
+          },
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : '生成失败，请重试';
+        return json({ message }, 502, origin);
+      }
     }
     const upstreamBody = {
       ...body,
