@@ -29,11 +29,20 @@
   font-size: 24rpx;
   font-weight: $font-weight-medium;
   border-radius: $radius-round;
+  border: 2rpx solid transparent;
   transition: all $transition-fast;
   &:active {
     background: $color-gradient-primary;
     color: #fff;
   }
+}
+
+.shortcutActive {
+  background: $color-gradient-primary;
+  color: #fff;
+  font-weight: $font-weight-semibold;
+  border-color: $color-primary;
+  box-shadow: $shadow-button;
 }
 
 .pickerRow {

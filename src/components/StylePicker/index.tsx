@@ -8,12 +8,13 @@ export interface StylePickerProps {
   value: string;
   onChange?: (key: string) => void;
   disabled?: boolean;
+  hideTitle?: boolean;
 }
 
-const StylePicker: React.FC<StylePickerProps> = ({ value, onChange, disabled = false }) => {
+const StylePicker: React.FC<StylePickerProps> = ({ value, onChange, disabled = false, hideTitle = false }) => {
   return (
     <View className={styles.wrap}>
-      <Text className={styles.title}>选择我的风格</Text>
+      {!hideTitle && <Text className={styles.title}>选择我的风格</Text>}
       <View className={styles.grid}>
         {STYLE_OPTIONS.map((opt) => {
           const active = value === opt.key;

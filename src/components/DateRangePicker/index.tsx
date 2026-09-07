@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Button, ScrollView, Picker } from '@tarojs/components';
 import styles from './index.module.scss';
 
@@ -9,6 +9,7 @@ interface DateRangePickerProps {
   minDate?: string;
   maxDate?: string;
   maxRangeDays?: number;
+  hideTitle?: boolean;
 }
 
 function format(d: Date) {
@@ -35,7 +36,8 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   onChange,
   minDate,
   maxDate,
-  maxRangeDays = 15
+  maxRangeDays = 15,
+  hideTitle = false
 }) => {
   const todayStr = minDate || format(new Date());
   const latestDate = maxDate || addDays(todayStr, 90);
@@ -48,9 +50,26 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     { label: '国庆(7天)', days: 7 }
   ];
 
+  // 选中态：记录最近一次点击的快捷选项；用户手动改日期后自动清除
+  const [activeLabel, setActiveLabel] = useState<string | null>(null);
+  const appliedRange = useRef<{ start: string; end: string } | null>(null);
+  useEffect(() => {
+    const applied = appliedRange.current;
+    if (applied && (startDate !== applied.start || endDate !== applied.end)) {
+      appliedRange.current = null;
+      setActiveLabel(null);
+    }
+  }, [startDate, endDate]);
+
+  const clearActive = () => {
+    appliedRange.current = null;
+    setActiveLabel(null);
+  };
+
   const handleStartChange = (e: any) => {
     const s = e.detail.value;
     if (!s) return;
+    clearActive();
     if (s < todayStr || s > latestDate) return;
     let en = endDate;
     if (en < s) en = addDays(s, 1);
@@ -62,6 +81,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   const handleEndChange = (e: any) => {
     const en = e.detail.value;
     if (!en) return;
+    clearActive();
     if (en < startDate || en > latestDate) return;
     if (diffDays(startDate, en) > maxRangeDays) {
       // 限制最大范围
@@ -72,24 +92,27 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     onChange?.(startDate, en);
   };
 
-  const applyShortcut = (days: number) => {
+  const applyShortcut = (label: string, days: number) => {
     const s = startDate >= todayStr ? startDate : todayStr;
     const shortcutEnd = addDays(s, days - 1);
-    onChange?.(s, shortcutEnd > latestDate ? latestDate : shortcutEnd);
+    const end = shortcutEnd > latestDate ? latestDate : shortcutEnd;
+    appliedRange.current = { start: s, end };
+    setActiveLabel(label);
+    onChange?.(s, end);
   };
 
   const totalDays = diffDays(startDate, endDate) + 1;
 
   return (
     <View className={styles.wrap}>
-      <Text className={styles.title}>选择旅行时间</Text>
+      {!hideTitle && <Text className={styles.title}>选择旅行时间</Text>}
 
       <View className={styles.shortcuts}>
         {shortcuts.map((s) => (
           <Button
             key={s.label}
-            className={styles.shortcutBtn}
-            onClick={() => applyShortcut(s.days)}
+            className={`${styles.shortcutBtn} ${activeLabel === s.label ? styles.shortcutActive : ''}`}
+            onClick={() => applyShortcut(s.label, s.days)}
           >
             {s.label}
           </Button>
@@ -103,9 +126,9 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
             className={styles.pickerBtn}
             onClick={() => {}}
           >
-            <Text className={styles.dateText}>{startDate}</Text>
+            <Text className={styles.dateText}>{startDate || '请选择日期'}</Text>
             <Text className={styles.weekText}>
-              周{'日一二三四五六'[new Date(startDate).getDay()]}
+              {startDate ? `周${'日一二三四五六'[new Date(startDate).getDay()]}` : '· · ·'}
             </Text>
             <Picker
               mode="date"
@@ -127,9 +150,9 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         <View className={styles.pickerCol}>
           <Text className={styles.label}>结束时间</Text>
           <Button className={styles.pickerBtn}>
-            <Text className={styles.dateText}>{endDate}</Text>
+            <Text className={styles.dateText}>{endDate || '请选择日期'}</Text>
             <Text className={styles.weekText}>
-              周{'日一二三四五六'[new Date(endDate).getDay()]}
+              {endDate ? `周${'日一二三四五六'[new Date(endDate).getDay()]}` : '· · ·'}
             </Text>
             <Picker
               mode="date"

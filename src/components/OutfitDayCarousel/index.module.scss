@@ -1,0 +1,327 @@
+@use '@/styles/variables.scss' as *;
+
+.wrap {
+  width: 100%;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4rpx $spacing-sm;
+}
+
+.topLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  min-width: 0;
+}
+
+.dayIndex {
+  font-size: 30rpx;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  letter-spacing: 1rpx;
+}
+
+.dayDate {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  @include text-ellipsis;
+}
+
+.weatherGroup {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.weatherText {
+  font-size: 24rpx;
+  color: $color-text-primary;
+}
+
+.tempText {
+  font-size: 26rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: 1 / 0.94;
+}
+
+.slide {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 62%;
+  will-change: transform;
+  transition: transform 0.34s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.slideActive {
+  z-index: 3;
+}
+
+.noTransition {
+  transition: none;
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 133.33%;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: 0 10rpx 30rpx rgba(23, 60, 52, 0.16);
+  background: #EDF4F0;
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24rpx;
+  gap: 12rpx;
+  background: linear-gradient(150deg, #F0FBF6 0%, #E4F2EB 100%);
+  text-align: center;
+}
+
+.fallbackEyebrow {
+  font-size: 22rpx;
+  color: $color-primary;
+  letter-spacing: 4rpx;
+  font-weight: $font-weight-semibold;
+}
+
+.fallbackTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.fallbackItem {
+  font-size: 24rpx;
+  color: $color-text-secondary;
+  @include text-ellipsis;
+  max-width: 100%;
+}
+
+.fallbackHint {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}
+
+.coverTag {
+  position: absolute;
+  left: 16rpx;
+  bottom: 14rpx;
+  padding: 6rpx 14rpx;
+  background: rgba(17, 24, 39, 0.55);
+  border-radius: $radius-round;
+  backdrop-filter: blur(8px);
+}
+
+.coverTagText {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+.likeTag {
+  position: absolute;
+  right: 16rpx;
+  top: 14rpx;
+  padding: 8rpx 14rpx;
+  background: linear-gradient(135deg, #FF5A5F 0%, #FF8A5C 100%);
+  border-radius: $radius-round;
+  box-shadow: 0 4rpx 12rpx rgba(255, 90, 95, 0.35);
+}
+
+.likeText {
+  font-size: 20rpx;
+  color: #fff;
+  font-weight: $font-weight-semibold;
+}
+
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28rpx;
+  margin-top: $spacing-md;
+}
+
+.navBtn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: $color-primary;
+  box-shadow: $shadow-card;
+  @include flex-center;
+  transition: all $transition-fast;
+  &:active { transform: scale(0.94); }
+}
+
+.navDisabled {
+  color: #C9CDD4;
+  box-shadow: none;
+  background: #F3F4F6;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #D7DEE0;
+  transition: all $transition-fast;
+}
+
+.dotActive {
+  width: 30rpx;
+  border-radius: 8rpx;
+  background: $color-primary;
+}
+
+.swipeHint {
+  display: block;
+  margin-top: $spacing-sm;
+  text-align: center;
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.detailCard {
+  margin-top: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: #FFFFFF;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+.detailHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  margin-bottom: 8rpx;
+}
+
+.detailTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.tagRow {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.rainTag {
+  padding: 4rpx 14rpx;
+  font-size: 20rpx;
+  border-radius: $radius-round;
+  background: rgba(64, 130, 199, 0.12);
+  color: #2E6FA8;
+  font-weight: $font-weight-medium;
+}
+
+.clearTag {
+  padding: 4rpx 14rpx;
+  font-size: 20rpx;
+  border-radius: $radius-round;
+  background: #F0FBF6;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.feelingTag {
+  padding: 4rpx 14rpx;
+  font-size: 20rpx;
+  border-radius: $radius-round;
+  background: rgba(43, 164, 113, 0.08);
+  color: $color-text-secondary;
+}
+
+.itemRows {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  padding: $spacing-sm 0;
+}
+
+.itemRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+}
+
+.itemLabel {
+  flex-shrink: 0;
+  width: 88rpx;
+  padding: 2rpx 0;
+  text-align: center;
+  font-size: 22rpx;
+  font-weight: $font-weight-medium;
+  color: $color-primary;
+  background: #F0FBF6;
+  border-radius: $radius-round;
+}
+
+.itemValue {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: $color-text-primary;
+}
+
+.reminderRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: $spacing-sm 0;
+  border-top: 1rpx solid $color-divider;
+}
+
+.reminderLabel {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-tertiary;
+}
+
+.reminderText {
+  flex: 1;
+  min-width: 0;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: $color-text-secondary;
+}

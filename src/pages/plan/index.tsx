@@ -5,7 +5,7 @@ import styles from './index.module.scss';
 import NavBar from '@/components/NavBar';
 import DateRangePicker from '@/components/DateRangePicker';
 import StylePicker from '@/components/StylePicker';
-import OutfitCard from '@/components/OutfitCard';
+import OutfitDayCarousel from '@/components/OutfitDayCarousel';
 import { DEFAULT_CITY } from '@/data/banners';
 import { saveOutfitPlan, login } from '@/services/outfit';
 import { useAppStore } from '@/store/useAppStore';
@@ -13,7 +13,7 @@ import { STYLE_OPTIONS } from '@/types';
 import type { OutfitPlan, CityInfo } from '@/types';
 import { buildWorkflowRequest, generateOutfitPlan } from '@/services/coze';
 import EmptyState from '@/components/EmptyState';
-import { getForecastMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
+import { getPlanningMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
 
 type Step = 1 | 2 | 3;
 
@@ -46,10 +46,30 @@ const PlanPage: React.FC = () => {
   const [isDemo, setIsDemo] = useState(false);
 
   const destination: CityInfo = draftDestination || DEFAULT_CITY;
+  const destSelected = Boolean(draftDestination);
+  const dateSelected = Boolean(draftStartDate && draftEndDate);
   const styleLabel = useMemo(
-    () => STYLE_OPTIONS.find((s) => s.key === draftStyle)?.label || '简约大气',
+    () => STYLE_OPTIONS.find((s) => s.key === draftStyle)?.label || '',
     [draftStyle]
   );
+  const totalDays = dateSelected
+    ? Math.round(
+        (new Date(draftEndDate).getTime() - new Date(draftStartDate).getTime()) / 86400000,
+      ) + 1
+    : 0;
+  const hasMultipleDays = totalDays > 1;
+
+  const dateSummary = useMemo(() => {
+    if (!dateSelected) return '';
+    return `${draftStartDate.slice(5).replace('-', '/')}–${draftEndDate.slice(5)}`;
+  }, [dateSelected, draftStartDate, draftEndDate]);
+
+  const missingRequired = useMemo(() => {
+    if (!destSelected) return '目的地';
+    if (!styleLabel) return '穿搭风格';
+    if (!dateSelected) return '出行时间';
+    return null;
+  }, [destSelected, styleLabel, dateSelected]);
 
   useEffect(() => {
     const dest = router.params?.destination;
@@ -75,22 +95,20 @@ const PlanPage: React.FC = () => {
     Taro.navigateTo({ url: '/pages/city-picker/index?from=plan' }).catch(console.error);
   };
 
-  const handleAutoLocate = () => goCityPicker();
-
   const tripStepAction = useMemo(() => {
     return getTripStepAction({
-      hasDestination: Boolean(destination),
+      hasDestination: destSelected,
       startDate: draftStartDate,
       endDate: draftEndDate,
       style: draftStyle,
     });
-  }, [destination, draftStartDate, draftEndDate, draftStyle]);
+  }, [destSelected, draftStartDate, draftEndDate, draftStyle]);
 
   const canGoStep2 = !tripStepAction.disabled;
 
   const handleGoStep2 = async () => {
     if (!canGoStep2) {
-      const tips = !destination
+      const tips = !destSelected
         ? '请先选择目的地'
         : !draftStyle
           ? '请选择风格'
@@ -132,16 +150,20 @@ const PlanPage: React.FC = () => {
   const loadingSteps = useMemo(
     () => [
       { key: 'weather', text: '正在获取目的地实时天气...' },
-      { key: 'style', text: `匹配${styleLabel}风格穿搭库...` },
+      { key: 'style', text: styleLabel ? `匹配${styleLabel}风格穿搭库...` : '匹配你的风格穿搭库...' },
       { key: 'city', text: `解析${destination.city}地域特色...` },
       { key: 'ai', text: 'AI 正在为你设计每日穿搭...' },
-      { key: 'img', text: '正在生成穿搭图片，优化方案细节...' }
+      { key: 'img', text: '正在生成穿搭参考图...' }
     ],
     [styleLabel, destination]
   );
 
   const handleReset = () => {
     setStep(1);
+    setGenerationError('');
+    setDraftDestination(null);
+    setDraftStyle('');
+    setDraftDate('', '');
     setDraftDailyList([]);
   };
 
@@ -179,10 +201,22 @@ const PlanPage: React.FC = () => {
     }
   };
 
+  const renderGroupHeader = (badge: string, title: string, chip: string, filled: boolean) => (
+    <View className={styles.groupHeader}>
+      <View className={styles.groupHeadLeft}>
+        <View className={styles.groupBadge}>{badge}</View>
+        <Text className={styles.groupTitle}>{title}</Text>
+      </View>
+      <View className={`${styles.groupChip} ${filled ? styles.groupChipOn : ''}`}>
+        {chip || '未选择'}
+      </View>
+    </View>
+  );
+
   return (
     <View className={styles.pageWrap}>
       <NavBar
-        title={step === 1 ? '选择行程信息' : step === 2 ? 'AI 正在设计穿搭' : '穿搭方案已生成'}
+        title={step === 1 ? '设计穿搭' : step === 2 ? 'AI 正在设计穿搭' : '穿搭方案已生成'}
         showBack
         onBack={() => {
           if (step === 1) Taro.navigateBack().catch(() => undefined);
@@ -220,19 +254,9 @@ const PlanPage: React.FC = () => {
 
       {step === 1 && (
         <View className={styles.formSection}>
-          {/* 目的地 */}
+          {/* 1 目的地 */}
           <View className={styles.card}>
-            <View className={styles.formTitle}>
-              <View className={styles.formTitleIcon}>
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="12" cy="10" r="3" stroke="white" strokeWidth="1.8"/>
-                </svg>
-              </View>
-              <Text className={styles.formTitleText}>选择目的地</Text>
-            </View>
-            <Text className={styles.formDesc}>支持国内外城市，点击右上角切换</Text>
-
+            {renderGroupHeader('1', '选择目的地', destSelected ? destination.city : '', destSelected)}
             <View className={styles.cityPickerRow} onClick={goCityPicker}>
               <View className={styles.cityIconBox}>
                 <svg viewBox="0 0 24 24" width="32" height="32" fill="none">
@@ -241,40 +265,37 @@ const PlanPage: React.FC = () => {
                 </svg>
               </View>
               <View className={styles.cityContent}>
-                <Text className={styles.cityTitle}>{destination.fullName}</Text>
-                <Text className={styles.citySub}>点击选择其他城市 / 定位当前位置</Text>
+                <Text className={styles.cityTitle}>
+                  {destSelected ? destination.fullName : '选择目的地'}
+                </Text>
+                <Text className={styles.citySub}>
+                  {destSelected ? '点击更换 · 支持自动定位' : '支持国内外城市 · 点击选择'}
+                </Text>
               </View>
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
                 <path d="M9 6L15 12L9 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round"/>
               </svg>
             </View>
-
-            <View style={{ marginTop: 16 }}>
-              <Button className={styles.autoLocateBtn} onClick={handleAutoLocate}>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-                  <circle cx="12" cy="12" r="3" stroke="#2BA471" strokeWidth="1.8"/>
-                  <path d="M12 2V5M12 19V22M2 12H5M19 12H22" stroke="#2BA471" strokeWidth="1.8" strokeLinecap="round"/>
-                </svg>
-                自动定位
-              </Button>
-            </View>
           </View>
 
-          {/* 日期 */}
+          {/* 2 出行时间 */}
           <View className={styles.card}>
+            {renderGroupHeader('2', '选择出行时间', dateSummary, dateSelected)}
             <DateRangePicker
               startDate={draftStartDate}
               endDate={draftEndDate}
               onChange={setDraftDate}
               minDate={new Date().toISOString().slice(0, 10)}
-              maxDate={getForecastMaxDate()}
+              maxDate={getPlanningMaxDate()}
               maxRangeDays={6}
+              hideTitle
             />
           </View>
 
-          {/* 风格 */}
+          {/* 3 穿搭风格 */}
           <View className={styles.card}>
-            <StylePicker value={draftStyle} onChange={setDraftStyle} />
+            {renderGroupHeader('3', '选择穿搭风格', styleLabel, Boolean(styleLabel))}
+            <StylePicker value={draftStyle} onChange={setDraftStyle} hideTitle />
             <View className={styles.preferenceFields}>
               <Input className={styles.preferenceInput} value={draftColor} placeholder="偏好色系（选填）" onInput={(e) => setDraftColor(e.detail.value)} />
               <Input className={styles.preferenceInput} value={draftOccasion} placeholder="旅行场景，如城市漫步（选填）" onInput={(e) => setDraftOccasion(e.detail.value)} />
@@ -283,17 +304,20 @@ const PlanPage: React.FC = () => {
           </View>
 
           <View className={styles.formActions}>
-            <Button className={styles.clearBtn} onClick={handleReset}>
-              清空重选
-            </Button>
             <Button
-              className={styles.nextBtn}
-              disabled={tripStepAction.disabled}
+              className={`${styles.nextBtn} ${canGoStep2 ? '' : styles.nextBtnDisabled}`}
+              disabled={!canGoStep2}
               onClick={handleGoStep2}
             >
-              {tripStepAction.label}
+              下一步：AI 生成
             </Button>
-            <Text className={styles.nextHint}>下一步将结合天气与偏好生成每日穿搭</Text>
+            <Text className={`${styles.nextHint} ${canGoStep2 ? '' : styles.nextHintWarn}`}>
+              {missingRequired
+                ? `请先选择${missingRequired}即可开始生成`
+                : hasMultipleDays
+                  ? `共 ${totalDays} 天 · 将按天生成穿搭参考图，请耐心等待`
+                  : '16 天内任选 1/3/7 天 · 将结合天气生成穿搭参考图'}
+            </Text>
           </View>
         </View>
       )}
@@ -321,7 +345,7 @@ const PlanPage: React.FC = () => {
           </View>
           <Text className={styles.loadingTitle}>正在为你定制穿搭方案 ✨</Text>
           <Text className={styles.loadingDesc}>
-            结合 {destination.city} 实时天气、{styleLabel} 风格偏好，
+            结合 {destination.city} 实时天气、{styleLabel || '所选风格'} 风格偏好，
             {'\n'}AI 正在设计每天的最佳穿衣组合
           </Text>
           <View className={styles.loadingSteps}>
@@ -381,11 +405,6 @@ const PlanPage: React.FC = () => {
             </View>
           </View>
 
-          <View className={styles.dailyTitleRow}>
-            <Text className={styles.dailyTitle}>每日穿搭</Text>
-            <Text className={styles.dailyCount}>共 {draftDailyList.length} 套方案</Text>
-          </View>
-
           {draftDailyList.length === 0 ? (
             <EmptyState
               title="暂无数据"
@@ -396,19 +415,7 @@ const PlanPage: React.FC = () => {
               onSecondaryAction={() => setStep(1)}
             />
           ) : (
-            draftDailyList.map((d, idx) => (
-              <OutfitCard
-                key={d.date + idx}
-                date={d.date}
-                destination={destination.fullName}
-                weather={d.weather}
-                temperature={d.temperature}
-                feeling={d.feeling}
-                daily={d}
-                showDateTag
-                isActiveDay={idx === 0}
-              />
-            ))
+            <OutfitDayCarousel dailyList={draftDailyList} destination={destination.fullName} />
           )}
         </View>
       )}

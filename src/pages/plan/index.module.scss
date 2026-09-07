@@ -494,3 +494,64 @@
   font-size: 22rpx;
   color: $color-text-tertiary;
 }
+
+/* Step1 分组卡片 */
+.groupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.groupHeadLeft {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  min-width: 0;
+}
+
+.groupBadge {
+  flex-shrink: 0;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: $color-gradient-primary;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: $font-weight-bold;
+  @include flex-center;
+}
+
+.groupTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.groupChip {
+  flex-shrink: 0;
+  max-width: 300rpx;
+  padding: 6rpx 16rpx;
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  background: #F3F4F6;
+  border-radius: $radius-round;
+  @include text-ellipsis;
+}
+
+.groupChipOn {
+  color: $color-primary;
+  background: #F0FBF6;
+  font-weight: $font-weight-medium;
+}
+
+.nextBtnDisabled {
+  background: #C9CDD4 !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.nextHintWarn {
+  color: #B45309;
+}
