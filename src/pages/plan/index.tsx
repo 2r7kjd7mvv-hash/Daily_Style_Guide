@@ -143,6 +143,7 @@ const PlanPage: React.FC = () => {
       setIsDemo(result.source === 'demo');
       setStep(3);
     } catch (error) {
+      console.error('[plan] 生成失败', error);
       setGenerationError(error instanceof Error ? error.message : '生成失败，请重试');
     }
   };

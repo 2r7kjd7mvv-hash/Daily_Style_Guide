@@ -74,6 +74,33 @@ export function extractEndPayload(stream: string): DayEndPayload | null {
   return null;
 }
 
+async function runDayWithRetry(
+  parameters: Record<string, unknown>,
+  day: DailyForecast,
+  token: string,
+  fetcher: WeatherFetcher,
+  dayIndex: number,
+  attempts = 2,
+): Promise<{ payload: DayEndPayload; date: string }> {
+  let lastError: unknown = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 150000);
+    try {
+      const fetcherWithTimeout: WeatherFetcher = (input, init) =>
+        fetcher(input, { ...init, signal: controller.signal });
+      return await runDay(parameters, day, token, fetcherWithTimeout, dayIndex);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts) break;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  if (lastError instanceof Error) throw lastError;
+  throw new Error(`第 ${dayIndex + 1} 天（${day.date}）生成失败，请重试`);
+}
+
 function compactDate(value: string) {
   return value
     .split('-')
@@ -163,7 +190,7 @@ export function createBatchedStream(options: BatchedGenerateOptions): ReadableSt
         const index = next;
         next += 1;
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        runDay(parameters, forecast[index], token, fetcher, index).then(
+        runDayWithRetry(parameters, forecast[index], token, fetcher, index).then(
           ({ payload, date }) => {
             results[index] = { date, payload };
             enqueueFrames([{
