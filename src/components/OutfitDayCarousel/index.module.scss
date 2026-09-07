@@ -53,12 +53,12 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  aspect-ratio: 1 / 1.28;
+  aspect-ratio: 1 / 1.24;
 }
 
 .slide {
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 0;
   width: 90%;
   will-change: transform;
