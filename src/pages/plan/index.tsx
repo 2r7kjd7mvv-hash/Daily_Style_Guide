@@ -350,6 +350,7 @@ const PlanPage: React.FC = () => {
           </Text>
           <View className={styles.loadingSteps}>
             {loadingSteps.map((s, i) => {
+              if (i > loadingIdx) return null; // 后续步骤未到时再出现，跟随真实进度
               const isDone = loadingIdx > i;
               const isActive = loadingIdx === i;
               return (
