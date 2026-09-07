@@ -188,12 +188,12 @@ const PlanPage: React.FC = () => {
         updated_at: Date.now()
       };
       await saveOutfitPlan(plan);
-      Taro.showToast({ title: '已保存到「我的穿搭」', icon: 'success' });
+      Taro.showToast({ title: '保存穿搭成功', icon: 'success', duration: 2000 });
       setTimeout(() => {
         Taro.switchTab({ url: '/pages/outfits/index' }).catch(() => {
           Taro.navigateBack().catch(() => undefined);
         });
-      }, 800);
+      }, 2000);
     } catch (e) {
       console.error(e);
       Taro.showToast({ title: '保存失败，请重试', icon: 'none' });
@@ -422,10 +422,10 @@ const PlanPage: React.FC = () => {
         </View>
       )}
 
-      {/* 底部按钮 */}
+      {/* 底部按钮：保存穿搭为主、重新设计为辅 */}
       {step === 3 && (
         <View className={styles.bottomBar}>
-          <Button className={styles.ghostBtn} onClick={handleReset}>
+          <Button className={styles.secondaryBtn} onClick={handleReset}>
             重新设计
           </Button>
           <Button
@@ -434,7 +434,7 @@ const PlanPage: React.FC = () => {
             disabled={saving || !draftDailyList.length}
             onClick={handleSave}
           >
-            保存我的穿搭
+            保存穿搭
           </Button>
         </View>
       )}

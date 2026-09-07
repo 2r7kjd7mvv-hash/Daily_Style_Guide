@@ -280,19 +280,19 @@
   }
 }
 
-.ghostBtn {
+.secondaryBtn {
   @include button-reset;
   flex-shrink: 0;
   height: $button-height-lg;
-  padding: 0 40rpx;
-  background: transparent;
+  padding: 0 44rpx;
+  background: #F3F4F6;
   color: $color-text-secondary;
   font-size: 28rpx;
   font-weight: $font-weight-medium;
   border-radius: $radius-button;
   border: 1rpx solid $color-border;
   transition: all $transition-fast;
-  &:active { background: #F7F9F8; }
+  &:active { background: #E5E7EB; }
 }
 
 /* Step 2 Loading */

@@ -32,9 +32,9 @@ interface DragState {
   horizontal: boolean;
 }
 
-const SLIDE_WIDTH_PCT = 78; // 相对容器宽度（竖版大图）
+const SLIDE_WIDTH_PCT = 90; // 相对容器宽度（小红书/抖音式竖版大图）
 const BASE_PCT = (100 - SLIDE_WIDTH_PCT) / 2 / SLIDE_WIDTH_PCT * 100;
-const STEP_PCT = (SLIDE_WIDTH_PCT + 2) / SLIDE_WIDTH_PCT * 100;
+const STEP_PCT = (SLIDE_WIDTH_PCT + 1) / SLIDE_WIDTH_PCT * 100;
 
 function translateFor(index: number, active: number, dragPx: number) {
   const pct = BASE_PCT + (index - active) * STEP_PCT;
