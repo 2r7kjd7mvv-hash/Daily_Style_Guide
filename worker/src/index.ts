@@ -1,3 +1,6 @@
+import { resolveForecast } from './weather';
+import type { ForecastParameters } from './weather';
+
 export interface WorkerEnv {
   COZE_API_TOKEN: string;
 }
@@ -23,7 +26,9 @@ function json(body: unknown, status: number, origin: string) {
   return Response.json(body, { status, headers: cors(origin) });
 }
 
-function isGenerateBody(body: unknown): body is { workflow_id: string; parameters: Record<string, unknown> } {
+function isGenerateBody(
+  body: unknown,
+): body is { workflow_id: string; parameters: ForecastParameters & Record<string, unknown> } {
   if (!body || typeof body !== 'object') return false;
   const value = body as Record<string, unknown>;
   const parameters = value.parameters as Record<string, unknown> | undefined;
@@ -56,13 +61,31 @@ export async function handleRequest(
   if (url.pathname === '/api/outfit/generate') {
     const body = await request.json().catch(() => null);
     if (!isGenerateBody(body)) return json({ message: '请求参数不完整' }, 400, origin);
+    let weatherData;
+    try {
+      weatherData = await resolveForecast(
+        body.parameters,
+        fetcher,
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '天气服务暂不可用';
+      const status = message.includes('暂不可用') ? 502 : 422;
+      return json({ message }, status, origin);
+    }
+    const upstreamBody = {
+      ...body,
+      parameters: {
+        ...body.parameters,
+        weather_data: JSON.stringify(weatherData),
+      },
+    };
     const upstream = await fetcher('https://api.coze.cn/v1/workflow/stream_run', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${env.COZE_API_TOKEN.replace(/[\s\u0000-\u001F\u007F]+/g, '')}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(upstreamBody),
     });
     return new Response(upstream.body, {
       status: upstream.status,

@@ -7,6 +7,7 @@ interface DateRangePickerProps {
   endDate: string;
   onChange?: (start: string, end: string) => void;
   minDate?: string;
+  maxDate?: string;
   maxRangeDays?: number;
 }
 
@@ -33,9 +34,11 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   endDate,
   onChange,
   minDate,
+  maxDate,
   maxRangeDays = 15
 }) => {
   const todayStr = minDate || format(new Date());
+  const latestDate = maxDate || addDays(todayStr, 90);
 
   const shortcuts = [
     { label: '1日游', days: 1 },
@@ -48,17 +51,18 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   const handleStartChange = (e: any) => {
     const s = e.detail.value;
     if (!s) return;
-    if (s < todayStr) return;
+    if (s < todayStr || s > latestDate) return;
     let en = endDate;
     if (en < s) en = addDays(s, 1);
     if (diffDays(s, en) > maxRangeDays) en = addDays(s, maxRangeDays);
+    if (en > latestDate) en = latestDate;
     onChange?.(s, en);
   };
 
   const handleEndChange = (e: any) => {
     const en = e.detail.value;
     if (!en) return;
-    if (en < startDate) return;
+    if (en < startDate || en > latestDate) return;
     if (diffDays(startDate, en) > maxRangeDays) {
       // 限制最大范围
       const clampedEnd = addDays(startDate, maxRangeDays);
@@ -70,7 +74,8 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
   const applyShortcut = (days: number) => {
     const s = startDate >= todayStr ? startDate : todayStr;
-    onChange?.(s, addDays(s, days - 1));
+    const shortcutEnd = addDays(s, days - 1);
+    onChange?.(s, shortcutEnd > latestDate ? latestDate : shortcutEnd);
   };
 
   const totalDays = diffDays(startDate, endDate) + 1;
@@ -106,7 +111,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
               mode="date"
               value={startDate}
               start={todayStr}
-              end={addDays(todayStr, 90)}
+              end={latestDate}
               onChange={handleStartChange}
               style={{ position: 'absolute', inset: 0, opacity: 0 }}
             >
@@ -130,7 +135,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
               mode="date"
               value={endDate}
               start={startDate}
-              end={addDays(startDate, maxRangeDays)}
+              end={addDays(startDate, maxRangeDays) > latestDate ? latestDate : addDays(startDate, maxRangeDays)}
               onChange={handleEndChange}
               style={{ position: 'absolute', inset: 0, opacity: 0 }}
             >
