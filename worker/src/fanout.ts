@@ -155,6 +155,7 @@ interface DayResult {
 export function createBatchedStream(options: BatchedGenerateOptions): ReadableStream<Uint8Array> {
   const { parameters, forecast, token, fetcher, concurrency = 3 } = options;
   const encoder = new TextEncoder();
+  let heartbeat: ReturnType<typeof setInterval> | undefined;
 
   return new ReadableStream<Uint8Array>({
     start(controller) {
@@ -174,6 +175,7 @@ export function createBatchedStream(options: BatchedGenerateOptions): ReadableSt
 
       const closeAfter = (errorMessage?: string) => {
         if (closed) return;
+        if (heartbeat) clearInterval(heartbeat);
         if (errorMessage) {
           enqueueFrames([{ name: 'Error', data: { error_message: errorMessage } }]);
         }
@@ -184,6 +186,11 @@ export function createBatchedStream(options: BatchedGenerateOptions): ReadableSt
           // 已关闭则忽略
         }
       };
+
+      // 长时间无进度时保持连接活跃，避免中间代理/浏览器把空闲长连接掐断
+      heartbeat = setInterval(() => {
+        enqueueFrames([{ name: 'PING', data: { content: '{}' } }]);
+      }, 15000);
 
       const scheduleNext = () => {
         if (closed || next >= forecast.length) return;
@@ -243,6 +250,7 @@ export function createBatchedStream(options: BatchedGenerateOptions): ReadableSt
     },
     cancel() {
       // 客户端中断：停止写入
+      if (heartbeat) clearInterval(heartbeat);
     },
   });
 }
