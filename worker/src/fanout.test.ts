@@ -102,7 +102,7 @@ describe('buildBatchedStream', () => {
     expect(stream).toContain('第 2026-09-05 天方案已完成');
   });
 
-  it('fails with a day-specific message when a day returns an empty result', async () => {
+  it('streams an Error frame with a day-specific message when a day returns an empty result', async () => {
     const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => {
       const content = JSON.stringify({ date_list: [], image_url_list: [], output_list: [] });
       return new Response(sseFrame('Message', {
@@ -110,13 +110,15 @@ describe('buildBatchedStream', () => {
       }), { headers: { 'Content-Type': 'text/event-stream' } });
     });
 
-    await expect(
-      buildBatchedStream({
-        parameters: { city: '杭州', start_time: '2026.9.5', end_time: '2026.9.7' },
-        forecast,
-        token: 'secret',
-        fetcher,
-      }),
-    ).rejects.toThrow('第 1 天（2026-09-05）生成失败，请重试');
+    const stream = await buildBatchedStream({
+      parameters: { city: '杭州', start_time: '2026.9.5', end_time: '2026.9.7' },
+      forecast,
+      token: 'secret',
+      fetcher,
+    });
+
+    expect(stream).toContain('event: Error');
+    expect(stream).toContain('第 1 天（2026-09-05）生成失败，请重试');
+    expect(stream).not.toContain('event: Done');
   });
 });

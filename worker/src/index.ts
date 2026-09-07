@@ -1,6 +1,6 @@
 import { resolveForecast } from './weather';
 import type { ForecastParameters } from './weather';
-import { buildBatchedStream } from './fanout';
+import { createBatchedStream } from './fanout';
 
 export interface WorkerEnv {
   COZE_API_TOKEN: string;
@@ -76,7 +76,7 @@ export async function handleRequest(
     }
     if (weatherData.length > 1) {
       try {
-        const stream = await buildBatchedStream({
+        const stream = createBatchedStream({
           parameters: body.parameters,
           forecast: weatherData,
           token: env.COZE_API_TOKEN,

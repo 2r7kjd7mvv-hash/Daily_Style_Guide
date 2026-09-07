@@ -21,9 +21,15 @@ interface SseData {
   error_message?: string;
 }
 
+interface SseFrame {
+  name: string;
+  data: unknown;
+  id?: number;
+}
+
 const COZE_RUN_URL = 'https://api.coze.cn/v1/workflow/stream_run';
 
-function sseText(events: Array<{ name: string; data: unknown; id?: number }>) {
+function sseText(events: SseFrame[]) {
   return events
     .map(({ name, data, id }) => {
       const lines = [
@@ -110,59 +116,120 @@ async function runDay(
   return { payload, date: day.date };
 }
 
-async function mapConcurrent<T, R>(
-  items: T[],
-  limit: number,
-  worker: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const results = new Array<R>(items.length);
-  let next = 0;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (next < items.length) {
-      const index = next;
-      next += 1;
-      results[index] = await worker(items[index], index);
-    }
+interface DayResult {
+  date: string;
+  payload: DayEndPayload;
+}
+
+/**
+ * 并行跑 N 个单日请求，每完成一天立即把进度帧写入流，
+ * 全部完成后按日期顺序合并 End 并写入 Done。任一失败写入 Error 后关闭。
+ */
+export function createBatchedStream(options: BatchedGenerateOptions): ReadableStream<Uint8Array> {
+  const { parameters, forecast, token, fetcher, concurrency = 3 } = options;
+  const encoder = new TextEncoder();
+
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      const results = new Array<DayResult | null>(forecast.length).fill(null);
+      let next = 0;
+      let finished = 0;
+      let closed = false;
+
+      const enqueueFrames = (events: SseFrame[]) => {
+        if (closed) return;
+        try {
+          controller.enqueue(encoder.encode(sseText(events)));
+        } catch {
+          closed = true;
+        }
+      };
+
+      const closeAfter = (errorMessage?: string) => {
+        if (closed) return;
+        if (errorMessage) {
+          enqueueFrames([{ name: 'Error', data: { error_message: errorMessage } }]);
+        }
+        closed = true;
+        try {
+          controller.close();
+        } catch {
+          // 已关闭则忽略
+        }
+      };
+
+      const scheduleNext = () => {
+        if (closed || next >= forecast.length) return;
+        const index = next;
+        next += 1;
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        runDay(parameters, forecast[index], token, fetcher, index).then(
+          ({ payload, date }) => {
+            results[index] = { date, payload };
+            enqueueFrames([{
+              name: 'Message',
+              data: { node_title: '穿搭生成', content: `第 ${date} 天方案已完成` },
+            }]);
+            finished += 1;
+            if (finished === forecast.length) {
+              const merged: DayEndPayload = {
+                date_list: [],
+                image_url_list: [],
+                output_list: [],
+              };
+              results
+                .filter((item): item is DayResult => item !== null)
+                .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))
+                .forEach(({ date, payload }) => {
+                  merged.date_list.push(...(payload.date_list?.length ? payload.date_list : [date]));
+                  merged.image_url_list.push(...payload.image_url_list);
+                  merged.output_list.push(...payload.output_list);
+                });
+              enqueueFrames([
+                {
+                  name: 'Message',
+                  data: {
+                    node_is_finish: true,
+                    node_title: 'End',
+                    node_type: 'End',
+                    content: JSON.stringify(merged),
+                  },
+                },
+                { name: 'Done', data: {} },
+              ]);
+              closeAfter();
+              return;
+            }
+            scheduleNext();
+          },
+          (error: unknown) => {
+            const message = error instanceof Error ? error.message : '生成失败，请重试';
+            closeAfter(message);
+          },
+        );
+      };
+
+      for (let i = 0; i < Math.min(concurrency, forecast.length); i += 1) {
+        scheduleNext();
+      }
+      if (forecast.length === 0) closeAfter();
+    },
+    cancel() {
+      // 客户端中断：停止写入
+    },
   });
-  await Promise.all(runners);
-  return results;
 }
 
 export async function buildBatchedStream(options: BatchedGenerateOptions) {
-  const { parameters, forecast, token, fetcher, concurrency = 3 } = options;
-  const days = await mapConcurrent(forecast, concurrency, (day, index) =>
-    runDay(parameters, day, token, fetcher, index),
-  );
-  days.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-
-  const merged: DayEndPayload = {
-    date_list: [],
-    image_url_list: [],
-    output_list: [],
-  };
-  const messages: Array<{ name: string; data: unknown }> = [];
-  days.forEach(({ date, payload }) => {
-    merged.date_list.push(...(payload.date_list?.length ? payload.date_list : [date]));
-    merged.image_url_list.push(...payload.image_url_list);
-    merged.output_list.push(...payload.output_list);
-    messages.push({
-      name: 'Message',
-      data: {
-        node_title: '穿搭生成',
-        content: `第 ${date} 天方案已完成`,
-      },
-    });
-  });
-
-  messages.push({
-    name: 'Message',
-    data: {
-      node_is_finish: true,
-      node_title: 'End',
-      node_type: 'End',
-      content: JSON.stringify(merged),
-    },
-  });
-  messages.push({ name: 'Done', data: {} });
-  return sseText(messages);
+  const stream = createBatchedStream(options);
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    text += decoder.decode(value, { stream: true });
+  }
+  text += decoder.decode();
+  return text;
 }
