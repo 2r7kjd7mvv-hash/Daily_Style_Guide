@@ -49,14 +49,40 @@ describe('resolveForecast', () => {
     ]);
   });
 
-  it('rejects travel dates outside the seven-day forecast window', async () => {
+  it('rejects travel dates beyond the 16-day planning window', async () => {
     const fetcher = vi.fn();
     await expect(resolveForecast(
-      { ...parameters, start_time: '2026.9.12', end_time: '2026.9.12' },
+      { ...parameters, start_time: '2026.9.20', end_time: '2026.9.20' },
       fetcher,
       new Date(2026, 8, 4, 12),
-    )).rejects.toThrow('开始日期请选择未来 7 天内');
+    )).rejects.toThrow('开始日期请选择未来 16 天内');
     expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it('accepts a trip planned ahead inside the 16-day window', async () => {
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === 'nominatim.openstreetmap.org') {
+        return Response.json([{ lat: '48.8566', lon: '2.3522' }]);
+      }
+      return Response.json({
+        latitude: 48.86,
+        longitude: 2.35,
+        timezone: 'Europe/Paris',
+        daily: {
+          time: ['2026-09-18', '2026-09-19'],
+          weather_code: [0, 2],
+          temperature_2m_min: [10, 11],
+          temperature_2m_max: [22, 23],
+          precipitation_probability_max: [5, 10],
+        },
+      });
+    });
+    await expect(resolveForecast(
+      { ...parameters, start_time: '2026.9.18', end_time: '2026.9.19' },
+      fetcher,
+      new Date(2026, 8, 4, 12),
+    )).resolves.toHaveLength(2);
   });
 
   it('rejects an empty geocoding result', async () => {

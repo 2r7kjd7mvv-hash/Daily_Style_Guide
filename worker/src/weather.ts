@@ -65,11 +65,11 @@ function validateDates(startValue: string, endValue: string, now: Date) {
   if (!start || !end) throw new Error('请完善日期');
 
   const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  const forecastMax = new Date(today.getTime() + 7 * DAY_MS);
+  const planningMax = new Date(today.getTime() + 15 * DAY_MS);
   if (start < today) throw new Error('开始日期不能早于今天');
-  if (start > forecastMax) throw new Error('开始日期请选择未来 7 天内');
+  if (start > planningMax) throw new Error('开始日期请选择未来 16 天内');
   if (end < start) throw new Error('结束日期不能早于开始日期');
-  if (end > forecastMax) throw new Error('结束日期请选择未来 7 天内');
+  if (end > planningMax) throw new Error('结束日期请选择未来 16 天内');
   if (Math.round((end.getTime() - start.getTime()) / DAY_MS) + 1 > 7) {
     throw new Error('旅行周期最多选择 7 天');
   }

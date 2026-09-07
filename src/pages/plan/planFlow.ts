@@ -7,6 +7,11 @@ interface TripStepActionInput {
 
 const DAY_MS = 86400000;
 
+// 可规划的总日历天数（含今天，最后可选日为 today + PLANNING_DAYS - 1）
+export const PLANNING_DAYS = 16;
+// 单次行程最长天数
+export const TRIP_MAX_DAYS = 7;
+
 function parseLocalDate(value: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
@@ -25,9 +30,9 @@ export function formatLocalDate(value: Date) {
   return `${year}-${month}-${day}`;
 }
 
-export function getForecastMaxDate(now = new Date()) {
+export function getPlanningMaxDate(now = new Date()) {
   const maxDate = startOfDay(now);
-  maxDate.setDate(maxDate.getDate() + 7);
+  maxDate.setDate(maxDate.getDate() + PLANNING_DAYS - 1);
   return formatLocalDate(maxDate);
 }
 
@@ -37,16 +42,16 @@ export function validateTravelDates(startDate: string, endDate: string, now = ne
   if (!start || !end) return '请完善日期';
 
   const today = startOfDay(now);
-  const forecastMax = new Date(today);
-  forecastMax.setDate(forecastMax.getDate() + 7);
+  const horizon = new Date(today);
+  horizon.setDate(horizon.getDate() + PLANNING_DAYS - 1);
 
   if (start < today) return '开始日期不能早于今天';
-  if (start > forecastMax) return '开始日期请选择未来 7 天内';
+  if (start > horizon) return '开始日期请选择未来 16 天内';
   if (end < start) return '结束日期不能早于开始日期';
-  if (end > forecastMax) return '结束日期请选择未来 7 天内';
+  if (end > horizon) return '结束日期请选择未来 16 天内';
 
   const duration = Math.round((end.getTime() - start.getTime()) / DAY_MS) + 1;
-  if (duration > 7) return '旅行周期最多选择 7 天';
+  if (duration > TRIP_MAX_DAYS) return `旅行周期最多选择 ${TRIP_MAX_DAYS} 天`;
   return null;
 }
 

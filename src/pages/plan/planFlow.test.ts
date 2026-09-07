@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getTripStepAction, validateTravelDates } from './planFlow';
+import { getPlanningMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
 
 describe('getTripStepAction', () => {
   it('offers the AI generation next step when required trip details are selected', () => {
@@ -31,6 +31,14 @@ describe('getTripStepAction', () => {
   });
 });
 
+describe('planning horizon', () => {
+  const now = new Date(2026, 8, 4, 12); // 2026-09-04
+
+  it('allows planning up to the sixteenth future calendar day', () => {
+    expect(getPlanningMaxDate(now)).toBe('2026-09-19');
+  });
+});
+
 describe('validateTravelDates', () => {
   const now = new Date(2026, 8, 4, 12);
 
@@ -38,16 +46,20 @@ describe('validateTravelDates', () => {
     expect(validateTravelDates('2026-09-04', '2026-09-04', now)).toBeNull();
   });
 
-  it('accepts a trip ending on the seventh future calendar day', () => {
-    expect(validateTravelDates('2026-09-05', '2026-09-11', now)).toBeNull();
+  it('accepts a one-day trip planned far ahead inside the 16-day window', () => {
+    expect(validateTravelDates('2026-09-19', '2026-09-19', now)).toBeNull();
+  });
+
+  it('accepts a seven-day trip ending on the last planning day', () => {
+    expect(validateTravelDates('2026-09-13', '2026-09-19', now)).toBeNull();
   });
 
   it('rejects a start date before today', () => {
     expect(validateTravelDates('2026-09-03', '2026-09-04', now)).toBe('开始日期不能早于今天');
   });
 
-  it('rejects a start date after the forecast window', () => {
-    expect(validateTravelDates('2026-09-12', '2026-09-12', now)).toBe('开始日期请选择未来 7 天内');
+  it('rejects a start date beyond the 16-day planning window', () => {
+    expect(validateTravelDates('2026-09-20', '2026-09-20', now)).toBe('开始日期请选择未来 16 天内');
   });
 
   it('rejects an end date before the start date', () => {
@@ -58,7 +70,7 @@ describe('validateTravelDates', () => {
     expect(validateTravelDates('2026-09-04', '2026-09-11', now)).toBe('旅行周期最多选择 7 天');
   });
 
-  it('rejects an end date after the forecast window', () => {
-    expect(validateTravelDates('2026-09-11', '2026-09-12', now)).toBe('结束日期请选择未来 7 天内');
+  it('rejects an end date beyond the 16-day planning window', () => {
+    expect(validateTravelDates('2026-09-19', '2026-09-20', now)).toBe('结束日期请选择未来 16 天内');
   });
 });
