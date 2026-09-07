@@ -53,14 +53,14 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  aspect-ratio: 1 / 0.94;
+  aspect-ratio: 1 / 1.16;
 }
 
 .slide {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 62%;
+  width: 78%;
   will-change: transform;
   transition: transform 0.34s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
