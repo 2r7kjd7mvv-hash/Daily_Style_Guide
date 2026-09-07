@@ -38,6 +38,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   const todayStr = minDate || format(new Date());
 
   const shortcuts = [
+    { label: '1日游', days: 1 },
     { label: '3天2晚', days: 3 },
     { label: '5天4晚', days: 5 },
     { label: '7天6晚', days: 7 },
