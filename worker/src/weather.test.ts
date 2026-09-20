@@ -11,6 +11,34 @@ const parameters = {
 };
 
 describe('resolveForecast', () => {
+  it('does not send the generic 国外 label to global geocoding', async () => {
+    const queries: string[] = [];
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === 'nominatim.openstreetmap.org') {
+        queries.push(url.searchParams.get('q') || '');
+        return Response.json([{ lat: '37.5667', lon: '126.9783' }]);
+      }
+      return Response.json({
+        latitude: 37.5667,
+        longitude: 126.9783,
+        timezone: 'Asia/Seoul',
+        daily: {
+          time: ['2026-09-05'], weather_code: [1], temperature_2m_min: [18],
+          temperature_2m_max: [27], precipitation_probability_max: [10], uv_index_max: [5],
+        },
+      });
+    });
+
+    await resolveForecast({
+      province: '国外', city: '韩国 首尔特别市', towns: '首尔', villages: '首尔',
+      start_time: '2026.9.5', end_time: '2026.9.5',
+    }, fetcher, new Date(2026, 8, 4, 12));
+
+    expect(queries[0]).toContain('韩国 首尔特别市');
+    expect(queries[0]).not.toContain('国外');
+  });
+
   it('geocodes the destination and maps Open-Meteo daily weather', async () => {
     const fetcher = vi.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input.toString());

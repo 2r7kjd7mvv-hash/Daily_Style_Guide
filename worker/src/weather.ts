@@ -105,6 +105,7 @@ export async function resolveForecast(
   const dates = validateDates(parameters.start_time, parameters.end_time, now);
   const destination = [parameters.villages, parameters.towns, parameters.city, parameters.province]
     .map((value) => value.trim())
+    .filter((value) => !['国外', '海外'].includes(value))
     .filter((value, index, list) => value && list.indexOf(value) === index)
     .join(', ');
 
