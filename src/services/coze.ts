@@ -135,7 +135,16 @@ export function normalizeWorkflowContent(content: string): DailyOutfit[] {
   if (!Array.isArray(payload.output_list)) {
     throw new Error('生成结果格式异常，请重新生成');
   }
-  return payload.output_list.map((daily, index) => {
+  const itemCount = Math.max(
+    payload.output_list.length,
+    payload.image_url_list?.length || 0,
+    payload.date_list?.length || 0,
+  );
+  return Array.from({ length: itemCount }, (_, index) => {
+    const daily = payload.output_list[index] || {
+      date: payload.date_list?.[index] || '',
+      city: '',
+    };
     const image = readImageEntry(payload.image_url_list?.[index]);
     const normalized: DailyOutfit = {
       date: daily.date || payload.date_list?.[index] || '',

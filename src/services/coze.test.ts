@@ -71,6 +71,21 @@ describe('normalizeWorkflowContent', () => {
     expect(normalizeWorkflowContent(content)[0].image_url).toMatch(/^data:image\/svg\+xml/);
   });
 
+  it('keeps generated reference images when the workflow omits outfit text', () => {
+    const content = JSON.stringify({
+      date_list: ['2026-09-20'],
+      image_url_list: ['https://s.coze.cn/t/generated-look/'],
+      output_list: [],
+    });
+
+    expect(normalizeWorkflowContent(content)).toEqual([
+      expect.objectContaining({
+        date: '2026-09-20',
+        image_url: 'https://s.coze.cn/t/generated-look/',
+      }),
+    ]);
+  });
+
   it('turns a Coze image prompt into a directly viewable strategy image', () => {
     const content = JSON.stringify({
       date_list: ['2026-09-03'],

@@ -401,17 +401,8 @@ const PlanPage: React.FC = () => {
             </View>
           </View>
 
-          {draftDailyList.length === 0 ? (
-            <EmptyState
-              title="暂无数据"
-              desc="这次没有生成有效方案"
-              actionText="重新生成"
-              onAction={handleGoStep2}
-              secondaryActionText="返回修改条件"
-              onSecondaryAction={() => setStep(1)}
-            />
-          ) : <>
-            <WeatherOverview days={forecastDays} />
+          <>
+            {forecastDays.length > 0 && <WeatherOverview days={forecastDays} />}
             {draftDailyList.map((daily, index) => (
               <View className={styles.strategySection} key={daily.date}>
                 <View className={styles.strategyIntro}>
@@ -424,7 +415,7 @@ const PlanPage: React.FC = () => {
                 <OutfitChecklist daily={daily} />
               </View>
             ))}
-          </>}
+          </>
         </View>
       )}
 
