@@ -13,7 +13,7 @@ import { TRIP_COLOR_OPTIONS, TRIP_STYLE_OPTIONS } from '@/features/trip/preferen
 import type { CityInfo, TripForecastDay } from '@/types';
 import { buildWorkflowRequest, generateOutfitPlan } from '@/services/coze';
 import { getTripForecast } from '@/services/weather';
-import { downloadRemoteImage } from '@/services/download';
+import { downloadOutfitImages } from '@/services/download';
 import EmptyState from '@/components/EmptyState';
 import { getPlanningMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
 import { getLoadingStepIndex } from './loadingState';
@@ -163,11 +163,13 @@ const PlanPage: React.FC = () => {
   };
 
   const handleDownload = async () => {
-    const imageUrl = draftDailyList.find((item) => item.image_url)?.image_url;
     setDownloading(true);
     try {
-      await downloadRemoteImage(imageUrl || '', `daily-style-${draftStartDate}.jpg`);
-      Taro.showToast({ title: '图片已下载', icon: 'success' });
+      const count = await downloadOutfitImages(draftDailyList.map((item) => ({
+        url: item.image_url,
+        date: item.date,
+      })));
+      Taro.showToast({ title: count > 1 ? `已下载 ${count} 张图片` : '图片已下载', icon: 'success' });
     } catch (error) {
       Taro.showToast({ title: error instanceof Error ? error.message : '下载失败', icon: 'none' });
     } finally {
