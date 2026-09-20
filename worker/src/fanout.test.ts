@@ -102,7 +102,7 @@ describe('buildBatchedStream', () => {
     expect(stream).toContain('第 2026-09-05 天方案已完成');
   });
 
-  it('streams an Error frame with a day-specific message when a day returns an empty result', async () => {
+  it('finishes gracefully when Coze returns an empty result for a day', async () => {
     const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => {
       const content = JSON.stringify({ date_list: [], image_url_list: [], output_list: [] });
       return new Response(sseFrame('Message', {
@@ -117,8 +117,8 @@ describe('buildBatchedStream', () => {
       fetcher,
     });
 
-    expect(stream).toContain('event: Error');
-    expect(stream).toContain('第 1 天（2026-09-05）生成失败，请重试');
-    expect(stream).not.toContain('event: Done');
+    expect(stream).not.toContain('event: Error');
+    expect(stream).toContain('event: Done');
+    expect(extractEndPayload(stream)?.output_list).toEqual([]);
   });
 });

@@ -137,7 +137,7 @@ async function runDay(
   }
   const stream = await response.text();
   const payload = extractEndPayload(stream);
-  if (!payload || !payload.output_list.length) {
+  if (!payload) {
     throw new Error(`第 ${dayIndex + 1} 天（${day.date}）生成失败，请重试`);
   }
   return { payload, date: day.date };
