@@ -43,6 +43,22 @@ interface ForecastResponse {
 
 const DAY_MS = 86400000;
 
+const KNOWN_GLOBAL_DESTINATIONS = [
+  { names: ['日本 东京都', '东京市', '新宿区', '涩谷区'], latitude: 35.6762, longitude: 139.6503 },
+  { names: ['日本 京都府', '京都市', '左京区', '东山区'], latitude: 35.0116, longitude: 135.7681 },
+  { names: ['韩国 首尔特别市', '首尔', '江南区', '明洞'], latitude: 37.5667, longitude: 126.9783 },
+  { names: ['法国 巴黎', 'Paris'], latitude: 48.8566, longitude: 2.3522 },
+  { names: ['意大利 罗马', 'Roma'], latitude: 41.9028, longitude: 12.4964 },
+];
+
+function knownCoordinates(parameters: ForecastParameters) {
+  if (!['国外', '海外'].includes(parameters.province.trim())) return null;
+  const source = [parameters.city, parameters.towns, parameters.villages].join(' ');
+  return KNOWN_GLOBAL_DESTINATIONS.find((destination) =>
+    destination.names.some((name) => source.includes(name))
+  ) || null;
+}
+
 function parseDate(value: string) {
   const match = /^(\d{4})[.-](\d{1,2})[.-](\d{1,2})$/.exec(value.trim());
   if (!match) return null;
@@ -109,18 +125,23 @@ export async function resolveForecast(
     .filter((value, index, list) => value && list.indexOf(value) === index)
     .join(', ');
 
-  const geocodingUrl = new URL('https://nominatim.openstreetmap.org/search');
-  geocodingUrl.searchParams.set('q', destination);
-  geocodingUrl.searchParams.set('format', 'jsonv2');
-  geocodingUrl.searchParams.set('limit', '1');
-  geocodingUrl.searchParams.set('accept-language', 'zh-CN,en');
-  const geocodingResponse = await fetcher(geocodingUrl, {
-    headers: { 'User-Agent': 'DailyStyleGuide/1.0 (global travel forecast)' },
-  });
-  if (!geocodingResponse.ok) throw new Error('目的地解析服务暂不可用');
-  const locations = await geocodingResponse.json() as GeocodingResult[];
-  const latitude = Number(locations[0]?.lat);
-  const longitude = Number(locations[0]?.lon);
+  const preset = knownCoordinates(parameters);
+  let latitude = preset?.latitude ?? Number.NaN;
+  let longitude = preset?.longitude ?? Number.NaN;
+  if (!preset) {
+    const geocodingUrl = new URL('https://nominatim.openstreetmap.org/search');
+    geocodingUrl.searchParams.set('q', destination);
+    geocodingUrl.searchParams.set('format', 'jsonv2');
+    geocodingUrl.searchParams.set('limit', '1');
+    geocodingUrl.searchParams.set('accept-language', 'zh-CN,en');
+    const geocodingResponse = await fetcher(geocodingUrl, {
+      headers: { 'User-Agent': 'DailyStyleGuide/1.0 (global travel forecast)' },
+    });
+    if (!geocodingResponse.ok) throw new Error('目的地解析服务暂不可用');
+    const locations = await geocodingResponse.json() as GeocodingResult[];
+    latitude = Number(locations[0]?.lat);
+    longitude = Number(locations[0]?.lon);
+  }
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) throw new Error('未找到该目的地');
 
   const forecastUrl = new URL('https://api.open-meteo.com/v1/forecast');

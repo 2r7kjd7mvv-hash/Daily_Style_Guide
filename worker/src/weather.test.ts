@@ -11,7 +11,7 @@ const parameters = {
 };
 
 describe('resolveForecast', () => {
-  it('does not send the generic 国外 label to global geocoding', async () => {
+  it('uses built-in coordinates for supported international destinations', async () => {
     const queries: string[] = [];
     const fetcher = vi.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input.toString());
@@ -35,8 +35,7 @@ describe('resolveForecast', () => {
       start_time: '2026.9.5', end_time: '2026.9.5',
     }, fetcher, new Date(2026, 8, 4, 12));
 
-    expect(queries[0]).toContain('韩国 首尔特别市');
-    expect(queries[0]).not.toContain('国外');
+    expect(queries).toHaveLength(0);
   });
 
   it('geocodes the destination and maps Open-Meteo daily weather', async () => {
