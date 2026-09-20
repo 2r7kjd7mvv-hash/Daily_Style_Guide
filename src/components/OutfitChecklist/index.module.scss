@@ -1,0 +1,10 @@
+@use '@/styles/variables.scss' as *;
+.wrap { display: flex; flex-direction: column; gap: 18rpx; }
+.kicker { font-size: 18rpx; letter-spacing: 4rpx; color: #87958f; }
+.title { margin-bottom: 8rpx; font-size: 34rpx; font-weight: 600; color: #27332e; }
+.item { display: flex; gap: 22rpx; padding: 20rpx; background: rgba(255,255,255,.78); border-radius: 32rpx; box-shadow: 0 10rpx 32rpx rgba(61,74,67,.055); }
+.thumb,.thumbEmpty { width: 166rpx; height: 166rpx; flex: 0 0 166rpx; border-radius: 24rpx; background: #dde4df; overflow: hidden; }
+.copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 7rpx; }
+.label { font-size: 20rpx; color: #71837b; letter-spacing: 2rpx; }
+.value { font-size: 26rpx; line-height: 1.45; color: #293630; font-weight: 600; }
+.reason { font-size: 21rpx; line-height: 1.45; color: #89918d; }

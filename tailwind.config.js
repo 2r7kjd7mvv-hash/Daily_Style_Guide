@@ -1,0 +1,1 @@
+module.exports = { content: ['./src/**/*.{ts,tsx}'], theme: { extend: { colors: { oat: '#F5F1E8', sage: '#839889', mist: '#AABBC8', latte: '#B7A38D', blush: '#C6A8A7', charcoal: '#4C5350' }, borderRadius: { organic: '28px' }, boxShadow: { soft: '0 18px 50px rgba(76,83,80,.10)' } } } };

@@ -1,0 +1,13 @@
+@use '@/styles/variables.scss' as *;
+.card { padding: 32rpx 0 30rpx; background: #f4f3ee; border-radius: 40rpx; overflow: hidden; }
+.heading { padding: 0 32rpx 22rpx; display: flex; flex-direction: column; gap: 7rpx; }
+.eyebrow { font-size: 18rpx; letter-spacing: 4rpx; color: #87958f; }
+.title { font-size: 34rpx; color: #27332e; font-weight: 600; }
+.scroller { width: 100%; white-space: nowrap; }
+.days { display: inline-flex; gap: 16rpx; padding: 0 32rpx; }
+.day { width: 190rpx; min-height: 220rpx; padding: 24rpx 18rpx; box-sizing: border-box; background: rgba(255,255,255,.72); border-radius: 28rpx; display: flex; flex-direction: column; align-items: center; gap: 7rpx; }
+.date { font-size: 22rpx; color: #6f7a75; }
+.icon { font-size: 42rpx; margin: 3rpx 0; }
+.weather { font-size: 24rpx; color: #34453e; }
+.temp { font-size: 28rpx; color: #27332e; font-weight: 600; }
+.meta { font-size: 18rpx; color: #89938f; }

@@ -120,6 +120,16 @@ export async function handleRequest(
     });
   }
 
+  if (url.pathname === '/api/weather/forecast') {
+    const body = await request.json().catch(() => null);
+    if (!isGenerateBody(body)) return json({ message: '请求参数不完整' }, 400, origin);
+    try {
+      return json(await resolveForecast(body.parameters, fetcher), 200, origin);
+    } catch (error) {
+      return json({ message: error instanceof Error ? error.message : '天气服务暂不可用' }, 502, origin);
+    }
+  }
+
   if (url.pathname === '/api/location/reverse') {
     const body = await request.json().catch(() => null) as { latitude?: number; longitude?: number } | null;
     if (!Number.isFinite(body?.latitude) || !Number.isFinite(body?.longitude)) {

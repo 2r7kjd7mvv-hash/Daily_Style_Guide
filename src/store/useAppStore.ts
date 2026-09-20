@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import type { UserInfo, CityInfo, DailyOutfit, StyleKey } from '@/types';
+import type { UserInfo, CityInfo, DailyOutfit, StyleKey, TripForecastDay } from '@/types';
+import type { TripColorKey, TripStyleKey } from '@/features/trip/preferences';
 
 interface AppState {
   // 用户
@@ -12,17 +13,23 @@ interface AppState {
   draftEndDate: string;
   draftStyle: StyleKey | string;
   draftColor: string;
+  draftStyles: TripStyleKey[];
+  draftColors: TripColorKey[];
   draftOccasion: string;
   draftAvoid: string;
   draftDailyList: DailyOutfit[];
+  draftForecast: TripForecastDay[];
 
   setDraftDestination: (d: CityInfo | null) => void;
   setDraftDate: (start: string, end: string) => void;
   setDraftStyle: (s: string) => void;
   setDraftColor: (c: string) => void;
+  setDraftStyles: (styles: TripStyleKey[]) => void;
+  setDraftColors: (colors: TripColorKey[]) => void;
   setDraftOccasion: (o: string) => void;
   setDraftAvoid: (a: string) => void;
   setDraftDailyList: (list: DailyOutfit[]) => void;
+  setDraftForecast: (list: TripForecastDay[]) => void;
   resetDraft: () => void;
 }
 
@@ -41,22 +48,31 @@ export const useAppStore = create<AppState>((set) => ({
   draftEndDate: end,
   draftStyle: 'minimal',
   draftColor: '',
+  draftStyles: [],
+  draftColors: [],
   draftOccasion: '',
   draftAvoid: '',
   draftDailyList: [],
+  draftForecast: [],
 
   setDraftDestination: (d) => set({ draftDestination: d }),
   setDraftDate: (s, e) => set({ draftStartDate: s, draftEndDate: e }),
   setDraftStyle: (s) => set({ draftStyle: s }),
   setDraftColor: (c) => set({ draftColor: c }),
+  setDraftStyles: (styles) => set({ draftStyles: styles }),
+  setDraftColors: (colors) => set({ draftColors: colors }),
   setDraftOccasion: (o) => set({ draftOccasion: o }),
   setDraftAvoid: (a) => set({ draftAvoid: a }),
   setDraftDailyList: (list) => set({ draftDailyList: list }),
+  setDraftForecast: (list) => set({ draftForecast: list }),
   resetDraft: () =>
     set({
       draftDestination: null,
       draftDailyList: [],
+      draftForecast: [],
       draftColor: '',
+      draftStyles: [],
+      draftColors: [],
       draftOccasion: '',
       draftAvoid: ''
     })

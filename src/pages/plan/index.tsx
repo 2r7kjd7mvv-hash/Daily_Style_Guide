@@ -1,57 +1,58 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Button, Input } from '@tarojs/components';
+import { View, Text, Button, Image } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import NavBar from '@/components/NavBar';
 import DateRangePicker from '@/components/DateRangePicker';
-import StylePicker from '@/components/StylePicker';
-import OutfitDayCarousel from '@/components/OutfitDayCarousel';
+import PreferencePicker from '@/components/PreferencePicker';
+import WeatherOverview from '@/components/WeatherOverview';
+import OutfitChecklist from '@/components/OutfitChecklist';
 import { DEFAULT_CITY } from '@/data/banners';
-import { saveOutfitPlan, login } from '@/services/outfit';
 import { useAppStore } from '@/store/useAppStore';
-import { STYLE_OPTIONS } from '@/types';
-import type { OutfitPlan, CityInfo } from '@/types';
+import { TRIP_COLOR_OPTIONS, TRIP_STYLE_OPTIONS } from '@/features/trip/preferences';
+import type { CityInfo, TripForecastDay } from '@/types';
 import { buildWorkflowRequest, generateOutfitPlan } from '@/services/coze';
+import { getTripForecast } from '@/services/weather';
+import { downloadOutfitImages } from '@/services/download';
 import EmptyState from '@/components/EmptyState';
 import { getPlanningMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
+import { getLoadingStepIndex } from './loadingState';
 
 type Step = 1 | 2 | 3;
 
 const PlanPage: React.FC = () => {
   const router = useRouter();
   const {
-    user,
-    setUser,
     draftDestination,
     draftStartDate,
     draftEndDate,
     draftStyle,
-    draftColor,
+    draftStyles,
+    draftColors,
     draftOccasion,
     draftAvoid,
     setDraftDestination,
     setDraftDate,
-    setDraftStyle,
-    setDraftColor,
-    setDraftOccasion,
-    setDraftAvoid,
+    setDraftStyles,
+    setDraftColors,
     draftDailyList,
-    setDraftDailyList
+    setDraftDailyList,
+    draftForecast,
+    setDraftForecast,
   } = useAppStore();
 
   const [step, setStep] = useState<Step>(1);
   const [loadingIdx, setLoadingIdx] = useState(0);
-  const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [generationError, setGenerationError] = useState('');
   const [isDemo, setIsDemo] = useState(false);
 
   const destination: CityInfo = draftDestination || DEFAULT_CITY;
   const destSelected = Boolean(draftDestination);
   const dateSelected = Boolean(draftStartDate && draftEndDate);
-  const styleLabel = useMemo(
-    () => STYLE_OPTIONS.find((s) => s.key === draftStyle)?.label || '',
-    [draftStyle]
-  );
+  const styleLabels = useMemo(() => TRIP_STYLE_OPTIONS.filter((item) => draftStyles.includes(item.key)).map((item) => item.label), [draftStyles]);
+  const colorLabels = useMemo(() => TRIP_COLOR_OPTIONS.filter((item) => draftColors.includes(item.key)).map((item) => item.label), [draftColors]);
+  const styleLabel = styleLabels.join('、');
   const totalDays = dateSelected
     ? Math.round(
         (new Date(draftEndDate).getTime() - new Date(draftStartDate).getTime()) / 86400000,
@@ -66,10 +67,10 @@ const PlanPage: React.FC = () => {
 
   const missingRequired = useMemo(() => {
     if (!destSelected) return '目的地';
-    if (!styleLabel) return '穿搭风格';
+    if (!draftStyles.length) return '穿搭风格';
     if (!dateSelected) return '出行时间';
     return null;
-  }, [destSelected, styleLabel, dateSelected]);
+  }, [destSelected, draftStyles, dateSelected]);
 
   useEffect(() => {
     const dest = router.params?.destination;
@@ -83,14 +84,6 @@ const PlanPage: React.FC = () => {
     }
   }, [router.params, setDraftDestination]);
 
-  useEffect(() => {
-    if (!user) {
-      login()
-        .then((u) => setUser(u))
-        .catch(() => undefined);
-    }
-  }, [user, setUser]);
-
   const goCityPicker = () => {
     Taro.navigateTo({ url: '/pages/city-picker/index?from=plan' }).catch(console.error);
   };
@@ -101,8 +94,9 @@ const PlanPage: React.FC = () => {
       startDate: draftStartDate,
       endDate: draftEndDate,
       style: draftStyle,
+      styles: draftStyles,
     });
-  }, [destSelected, draftStartDate, draftEndDate, draftStyle]);
+  }, [destSelected, draftStartDate, draftEndDate, draftStyle, draftStyles]);
 
   const canGoStep2 = !tripStepAction.disabled;
 
@@ -110,7 +104,7 @@ const PlanPage: React.FC = () => {
     if (!canGoStep2) {
       const tips = !destSelected
         ? '请先选择目的地'
-        : !draftStyle
+        : !draftStyles.length
           ? '请选择风格'
           : '请完善日期';
       Taro.showToast({ title: tips, icon: 'none' });
@@ -129,17 +123,19 @@ const PlanPage: React.FC = () => {
         destination,
         startDate: draftStartDate,
         endDate: draftEndDate,
-        stylePreference: styleLabel,
-        colorPreference: draftColor,
+        stylePreferences: styleLabels,
+        colorPreferences: colorLabels,
         avoidItems: draftAvoid,
         occasion: draftOccasion,
       });
+      const forecastPromise = getTripForecast(request).catch(() => []);
       const result = await generateOutfitPlan(request, {
         onEvent: (event) => {
-          if (event.event === 'Message') setLoadingIdx((current) => Math.min(current + 1, 4));
+          setLoadingIdx((current) => getLoadingStepIndex(event, current));
         },
       });
       setDraftDailyList(result.dailyList);
+      setDraftForecast(await forecastPromise);
       setIsDemo(result.source === 'demo');
       setStep(3);
     } catch (error) {
@@ -162,45 +158,41 @@ const PlanPage: React.FC = () => {
   const handleReset = () => {
     setStep(1);
     setGenerationError('');
-    setDraftDestination(null);
-    setDraftStyle('');
-    setDraftDate('', '');
     setDraftDailyList([]);
+    setDraftForecast([]);
   };
 
-  const handleSave = async () => {
-    if (!draftDailyList.length) {
-      Taro.showToast({ title: '还没有穿搭内容', icon: 'none' });
-      return;
-    }
-    setSaving(true);
+  const handleDownload = async () => {
+    setDownloading(true);
     try {
-      const plan: OutfitPlan = {
-        destination,
-        start_date: draftStartDate,
-        end_date: draftEndDate,
-        style_preference: draftStyle,
-        color_preference: draftColor,
-        occasion: draftOccasion,
-        avoid_items: draftAvoid,
-        daily_list: draftDailyList,
-        created_at: Date.now(),
-        updated_at: Date.now()
-      };
-      await saveOutfitPlan(plan);
-      Taro.showToast({ title: '保存穿搭成功', icon: 'success', duration: 2000 });
-      setTimeout(() => {
-        Taro.switchTab({ url: '/pages/outfits/index' }).catch(() => {
-          Taro.navigateBack().catch(() => undefined);
-        });
-      }, 2000);
-    } catch (e) {
-      console.error(e);
-      Taro.showToast({ title: '保存失败，请重试', icon: 'none' });
+      const count = await downloadOutfitImages(draftDailyList.map((item) => ({
+        url: item.image_url,
+        date: item.date,
+      })));
+      Taro.showToast({ title: count > 1 ? `已下载 ${count} 张图片` : '图片已下载', icon: 'success' });
+    } catch (error) {
+      Taro.showToast({ title: error instanceof Error ? error.message : '下载失败', icon: 'none' });
     } finally {
-      setSaving(false);
+      setDownloading(false);
     }
   };
+
+  const forecastDays = useMemo<TripForecastDay[]>(() => {
+    if (draftForecast.length) return draftForecast;
+    return draftDailyList.map((day) => {
+      const numbers = day.temperature.match(/-?\d+(?:\.\d+)?/g)?.map(Number) || [];
+      return {
+        date: day.date,
+        weather: day.weather,
+        weather_code: day.weather.includes('雨') ? 61 : day.weather.includes('云') ? 2 : 0,
+        temperature_min: numbers[0] || 0,
+        temperature_max: numbers[1] ?? numbers[0] ?? 0,
+        precipitation_probability: 0,
+        uv_index: 0,
+        timezone: '',
+      };
+    });
+  }, [draftForecast, draftDailyList]);
 
   const renderGroupHeader = (badge: string, title: string, chip: string, filled: boolean) => (
     <View className={styles.groupHeader}>
@@ -296,12 +288,12 @@ const PlanPage: React.FC = () => {
           {/* 3 穿搭风格 */}
           <View className={styles.card}>
             {renderGroupHeader('3', '选择穿搭风格', styleLabel, Boolean(styleLabel))}
-            <StylePicker value={draftStyle} onChange={setDraftStyle} hideTitle />
-            <View className={styles.preferenceFields}>
-              <Input className={styles.preferenceInput} value={draftColor} placeholder="偏好色系（选填）" onInput={(e) => setDraftColor(e.detail.value)} />
-              <Input className={styles.preferenceInput} value={draftOccasion} placeholder="旅行场景，如城市漫步（选填）" onInput={(e) => setDraftOccasion(e.detail.value)} />
-              <Input className={styles.preferenceInput} value={draftAvoid} placeholder="不想穿的单品（选填）" onInput={(e) => setDraftAvoid(e.detail.value)} />
-            </View>
+            <PreferencePicker options={TRIP_STYLE_OPTIONS} values={draftStyles} onChange={setDraftStyles} />
+          </View>
+
+          <View className={styles.card}>
+            {renderGroupHeader('4', '选择喜好颜色', colorLabels.join('、'), Boolean(colorLabels.length))}
+            <PreferencePicker options={TRIP_COLOR_OPTIONS} values={draftColors} onChange={setDraftColors} />
           </View>
 
           <View className={styles.formActions}>
@@ -325,6 +317,8 @@ const PlanPage: React.FC = () => {
 
       {step === 2 && (
         <View className={styles.loadingWrap}>
+          <View className={`${styles.loadingFabric} ${styles.loadingFabricOne}`} />
+          <View className={`${styles.loadingFabric} ${styles.loadingFabricTwo}`} />
           {generationError ? (
             <EmptyState
               title="生成暂时中断"
@@ -416,23 +410,35 @@ const PlanPage: React.FC = () => {
               secondaryActionText="返回修改条件"
               onSecondaryAction={() => setStep(1)}
             />
-          ) : (
-            <OutfitDayCarousel dailyList={draftDailyList} destination={destination.fullName} />
-          )}
+          ) : <>
+            <WeatherOverview days={forecastDays} />
+            {draftDailyList.map((daily, index) => (
+              <View className={styles.strategySection} key={daily.date}>
+                <View className={styles.strategyIntro}>
+                  <Text className={styles.strategyDay}>DAY {String(index + 1).padStart(2, '0')} · {daily.date.slice(5)}</Text>
+                  <Text className={styles.strategyTitle}>{daily.city || destination.city} 的今日穿搭</Text>
+                  <Text className={styles.strategyCopy}>{daily.reasoning_content || `${daily.temperature}，${daily.feeling}。建议以舒适叠穿为主，方便随天气变化穿脱。`}</Text>
+                </View>
+                {daily.image_url && <View className={styles.heroImageWrap}><Image className={styles.heroImage} src={daily.image_url} mode="aspectFill" /></View>}
+                <View className={styles.reminder}>{daily.reminder}</View>
+                <OutfitChecklist daily={daily} />
+              </View>
+            ))}
+          </>}
         </View>
       )}
 
-      {/* 底部按钮：保存穿搭为主、重新设计为辅 */}
+      {/* 下载只保存到用户设备，不写入系统历史记录 */}
       {step === 3 && (
         <View className={styles.bottomBar}>
           <View className={styles.secondaryBtn} onClick={handleReset}>
             重新设计
           </View>
           <View
-            className={`${styles.primaryBtn} ${saving || !draftDailyList.length ? styles.btnDisabled : ''}`}
-            onClick={() => !saving && draftDailyList.length > 0 && handleSave()}
+            className={`${styles.primaryBtn} ${downloading || !draftDailyList.length ? styles.btnDisabled : ''}`}
+            onClick={() => !downloading && draftDailyList.length > 0 && handleDownload()}
           >
-            {saving ? '保存中…' : '保存穿搭'}
+            {downloading ? '下载中…' : '下载图片'}
           </View>
         </View>
       )}

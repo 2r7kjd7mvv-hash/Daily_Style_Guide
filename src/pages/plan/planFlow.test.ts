@@ -16,6 +16,15 @@ describe('getTripStepAction', () => {
     });
   });
 
+  it('accepts multiple selected styles and does not require a color', () => {
+    expect(getTripStepAction({
+      hasDestination: true,
+      startDate: '2026-09-20',
+      endDate: '2026-09-20',
+      styles: ['leisure', 'photo'],
+    }).disabled).toBe(false);
+  });
+
   it('keeps the next step disabled when dates are incomplete', () => {
     expect(
       getTripStepAction({

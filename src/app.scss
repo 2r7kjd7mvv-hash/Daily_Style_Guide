@@ -23,13 +23,6 @@ body {
   box-shadow: 0 0 80rpx rgba(23, 35, 33, 0.08);
 }
 
-.taro-tabbar__tabbar {
-  left: 50% !important;
-  width: 100% !important;
-  max-width: 375px;
-  transform: translateX(-50%);
-}
-
 button:focus-visible,
 input:focus-visible {
   outline: 4rpx solid rgba(36, 124, 109, 0.28);

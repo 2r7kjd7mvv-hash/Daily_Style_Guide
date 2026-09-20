@@ -16,6 +16,7 @@ export interface DailyForecast {
   temperature_max: number;
   precipitation_probability: number;
   weather_code: number;
+  uv_index: number;
   latitude: number;
   longitude: number;
   timezone: string;
@@ -36,6 +37,7 @@ interface ForecastResponse {
     temperature_2m_min?: number[];
     temperature_2m_max?: number[];
     precipitation_probability_max?: number[];
+    uv_index_max?: number[];
   };
 }
 
@@ -128,6 +130,7 @@ export async function resolveForecast(
     'temperature_2m_min',
     'temperature_2m_max',
     'precipitation_probability_max',
+    'uv_index_max',
   ].join(','));
   forecastUrl.searchParams.set('timezone', 'auto');
   forecastUrl.searchParams.set('start_date', dates.start);
@@ -150,6 +153,7 @@ export async function resolveForecast(
         '天气数据不完整',
       ),
       weather_code: code,
+      uv_index: requiredNumber(daily.uv_index_max?.[index], '天气数据不完整'),
       latitude: requiredNumber(forecast.latitude, '天气数据不完整'),
       longitude: requiredNumber(forecast.longitude, '天气数据不完整'),
       timezone: forecast.timezone || 'auto',

@@ -302,6 +302,8 @@
 
 /* Step 2 Loading */
 .loadingWrap {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -309,6 +311,11 @@
   padding: 120rpx $page-padding;
   min-height: 70vh;
 }
+
+.loadingFabric { position: absolute; pointer-events: none; border-radius: 44% 56% 65% 35%; opacity: .34; filter: blur(2rpx); animation: fabricFloat 10s ease-in-out infinite alternate; }
+.loadingFabricOne { width: 400rpx; height: 330rpx; top: 30rpx; right: -210rpx; background: #aabbc8; }
+.loadingFabricTwo { width: 460rpx; height: 380rpx; bottom: -120rpx; left: -250rpx; background: #c6a8a7; animation-delay: -4s; }
+@keyframes fabricFloat { from { transform: translate3d(0,0,0) rotate(5deg); } to { transform: translate3d(30rpx,40rpx,0) rotate(14deg); } }
 
 .ringLoader {
   width: 180rpx;
@@ -441,6 +448,7 @@
 /* Step3 结果 */
 .resultWrap {
   padding: $spacing-lg $page-padding 240rpx;
+  background: linear-gradient(180deg, #f6f5f0 0%, #eef1ed 100%);
 }
 
 .resultHead {
@@ -493,6 +501,15 @@
   font-weight: $font-weight-medium;
   border-radius: $radius-round;
 }
+
+.strategySection { margin-top: 38rpx; padding: 32rpx; border-radius: 40rpx; background: rgba(255,255,255,.62); display: flex; flex-direction: column; gap: 26rpx; }
+.strategyIntro { display: flex; flex-direction: column; gap: 10rpx; }
+.strategyDay { font-size: 18rpx; letter-spacing: 4rpx; color: #84928c; }
+.strategyTitle { font-size: 36rpx; line-height: 1.35; font-weight: 600; color: #27332e; }
+.strategyCopy { font-size: 25rpx; line-height: 1.75; color: #65726c; }
+.heroImageWrap { width: 100%; height: 780rpx; border-radius: 36rpx; overflow: hidden; background: #dfe6e1; box-shadow: 0 18rpx 52rpx rgba(52,65,59,.10); }
+.heroImage { width: 100%; height: 100%; display: block; }
+.reminder { padding: 24rpx 26rpx; border-radius: 26rpx; background: #eee8df; color: #735f4e; font-size: 23rpx; line-height: 1.6; }
 
 .dailyTitleRow {
   display: flex;

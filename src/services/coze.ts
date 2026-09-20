@@ -14,6 +14,8 @@ export interface WorkflowDraft {
   endDate: string;
   stylePreference?: string;
   colorPreference?: string;
+  stylePreferences?: string[];
+  colorPreferences?: string[];
   avoidItems?: string;
   occasion?: string;
 }
@@ -178,8 +180,8 @@ export function buildWorkflowRequest(draft: WorkflowDraft): WorkflowGenerateRequ
     end_time: compactDate(draft.endDate),
   };
   const entries = {
-    style_preference: optional(draft.stylePreference),
-    color_preference: optional(draft.colorPreference),
+    style_preference: optional(draft.stylePreferences?.join('、') || draft.stylePreference),
+    color_preference: optional(draft.colorPreferences?.join('、') || draft.colorPreference),
     avoid_items: optional(draft.avoidItems),
     occasion: optional(draft.occasion),
   };

@@ -21,15 +21,15 @@ function dayStream(date: string, imageUrl: string) {
 const forecast: DailyForecast[] = [
   {
     date: '2026-09-05', weather: '晴', temperature_min: 12, temperature_max: 24,
-    precipitation_probability: 5, weather_code: 0, latitude: 30.2, longitude: 120.1, timezone: 'Asia/Shanghai',
+    precipitation_probability: 5, weather_code: 0, uv_index: 5.4, latitude: 30.2, longitude: 120.1, timezone: 'Asia/Shanghai',
   },
   {
     date: '2026-09-06', weather: '多云', temperature_min: 13, temperature_max: 23,
-    precipitation_probability: 20, weather_code: 2, latitude: 30.2, longitude: 120.1, timezone: 'Asia/Shanghai',
+    precipitation_probability: 20, weather_code: 2, uv_index: 4.2, latitude: 30.2, longitude: 120.1, timezone: 'Asia/Shanghai',
   },
   {
     date: '2026-09-07', weather: '阵雨', temperature_min: 15, temperature_max: 22,
-    precipitation_probability: 70, weather_code: 80, latitude: 30.2, longitude: 120.1, timezone: 'Asia/Shanghai',
+    precipitation_probability: 70, weather_code: 80, uv_index: 2.1, latitude: 30.2, longitude: 120.1, timezone: 'Asia/Shanghai',
   },
 ];
 
