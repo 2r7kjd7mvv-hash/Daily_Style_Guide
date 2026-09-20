@@ -31,6 +31,7 @@ describe('resolveForecast', () => {
           temperature_2m_min: [12.2, 13.1],
           temperature_2m_max: [23.7, 21.6],
           precipitation_probability_max: [5, 70],
+          uv_index_max: [5.4, 2.1],
         },
       });
     });
@@ -38,12 +39,12 @@ describe('resolveForecast', () => {
     await expect(resolveForecast(parameters, fetcher, new Date(2026, 8, 4, 12))).resolves.toEqual([
       {
         date: '2026-09-05', weather: '晴', temperature_min: 12.2, temperature_max: 23.7,
-        precipitation_probability: 5, weather_code: 0, latitude: 48.86, longitude: 2.35,
+        precipitation_probability: 5, weather_code: 0, uv_index: 5.4, latitude: 48.86, longitude: 2.35,
         timezone: 'Europe/Paris',
       },
       {
         date: '2026-09-06', weather: '小雨', temperature_min: 13.1, temperature_max: 21.6,
-        precipitation_probability: 70, weather_code: 61, latitude: 48.86, longitude: 2.35,
+        precipitation_probability: 70, weather_code: 61, uv_index: 2.1, latitude: 48.86, longitude: 2.35,
         timezone: 'Europe/Paris',
       },
     ]);
@@ -75,6 +76,7 @@ describe('resolveForecast', () => {
           temperature_2m_min: [10, 11],
           temperature_2m_max: [22, 23],
           precipitation_probability_max: [5, 10],
+          uv_index_max: [5.4, 4.2],
         },
       });
     });

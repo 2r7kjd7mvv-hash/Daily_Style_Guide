@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { UserInfo, CityInfo, DailyOutfit, StyleKey } from '@/types';
+import type { UserInfo, CityInfo, DailyOutfit, StyleKey, TripForecastDay } from '@/types';
 import type { TripColorKey, TripStyleKey } from '@/features/trip/preferences';
 
 interface AppState {
@@ -18,6 +18,7 @@ interface AppState {
   draftOccasion: string;
   draftAvoid: string;
   draftDailyList: DailyOutfit[];
+  draftForecast: TripForecastDay[];
 
   setDraftDestination: (d: CityInfo | null) => void;
   setDraftDate: (start: string, end: string) => void;
@@ -28,6 +29,7 @@ interface AppState {
   setDraftOccasion: (o: string) => void;
   setDraftAvoid: (a: string) => void;
   setDraftDailyList: (list: DailyOutfit[]) => void;
+  setDraftForecast: (list: TripForecastDay[]) => void;
   resetDraft: () => void;
 }
 
@@ -51,6 +53,7 @@ export const useAppStore = create<AppState>((set) => ({
   draftOccasion: '',
   draftAvoid: '',
   draftDailyList: [],
+  draftForecast: [],
 
   setDraftDestination: (d) => set({ draftDestination: d }),
   setDraftDate: (s, e) => set({ draftStartDate: s, draftEndDate: e }),
@@ -61,10 +64,12 @@ export const useAppStore = create<AppState>((set) => ({
   setDraftOccasion: (o) => set({ draftOccasion: o }),
   setDraftAvoid: (a) => set({ draftAvoid: a }),
   setDraftDailyList: (list) => set({ draftDailyList: list }),
+  setDraftForecast: (list) => set({ draftForecast: list }),
   resetDraft: () =>
     set({
       draftDestination: null,
       draftDailyList: [],
+      draftForecast: [],
       draftColor: '',
       draftStyles: [],
       draftColors: [],

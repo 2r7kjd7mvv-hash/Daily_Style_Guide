@@ -22,6 +22,18 @@ export interface DailyWeather {
   humidity: number;
 }
 
+/** Worker 返回的出行天气概览 */
+export interface TripForecastDay {
+  date: string;
+  weather: string;
+  weather_code: number;
+  temperature_min: number;
+  temperature_max: number;
+  precipitation_probability: number;
+  uv_index: number;
+  timezone: string;
+}
+
 /** 单日天气分析（WeatherAnalysis 输出） */
 export interface WeatherAnalysis {
   date: string;

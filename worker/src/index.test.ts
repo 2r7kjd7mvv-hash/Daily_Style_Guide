@@ -37,6 +37,7 @@ function createGenerateFetcher(onCoze?: (init?: RequestInit) => void) {
           temperature_2m_min: [12],
           temperature_2m_max: [24],
           precipitation_probability_max: [5],
+          uv_index_max: [5.4],
         },
       });
     }
@@ -71,6 +72,20 @@ afterEach(() => {
 });
 
 describe('Cloudflare Worker', () => {
+  it('returns the resolved daily forecast for the result overview', async () => {
+    const request = new Request('https://worker.test/api/weather/forecast', {
+      method: 'POST',
+      headers: { Origin: origin, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ workflow_id: '7680787686953058346', parameters: dayParams }),
+    });
+    const response = await handleRequest(request, { COZE_API_TOKEN: 'secret' }, createGenerateFetcher());
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject([
+      { date: '2026-09-05', weather: '晴', temperature_min: 12, temperature_max: 24, uv_index: 5.4 },
+    ]);
+  });
+
   it('injects resolved global weather into the Coze workflow parameters for a single day', async () => {
     let cozeBody: Record<string, unknown> | undefined;
     const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -89,6 +104,7 @@ describe('Cloudflare Worker', () => {
             temperature_2m_min: [12],
             temperature_2m_max: [24],
             precipitation_probability_max: [5],
+            uv_index_max: [5.4],
           },
         });
       }
@@ -130,6 +146,7 @@ describe('Cloudflare Worker', () => {
             temperature_2m_min: [12, 13, 15],
             temperature_2m_max: [24, 23, 22],
             precipitation_probability_max: [5, 20, 70],
+            uv_index_max: [5.4, 4.2, 2.1],
           },
         });
       }
