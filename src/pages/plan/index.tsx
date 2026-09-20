@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Button, Input } from '@tarojs/components';
+import { View, Text, Button } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import NavBar from '@/components/NavBar';
 import DateRangePicker from '@/components/DateRangePicker';
-import StylePicker from '@/components/StylePicker';
+import PreferencePicker from '@/components/PreferencePicker';
 import OutfitDayCarousel from '@/components/OutfitDayCarousel';
 import { DEFAULT_CITY } from '@/data/banners';
 import { saveOutfitPlan, login } from '@/services/outfit';
 import { useAppStore } from '@/store/useAppStore';
-import { STYLE_OPTIONS } from '@/types';
+import { TRIP_COLOR_OPTIONS, TRIP_STYLE_OPTIONS } from '@/features/trip/preferences';
 import type { OutfitPlan, CityInfo } from '@/types';
 import { buildWorkflowRequest, generateOutfitPlan } from '@/services/coze';
 import EmptyState from '@/components/EmptyState';
 import { getPlanningMaxDate, getTripStepAction, validateTravelDates } from './planFlow';
+import { getLoadingStepIndex } from './loadingState';
 
 type Step = 1 | 2 | 3;
 
@@ -27,14 +28,15 @@ const PlanPage: React.FC = () => {
     draftEndDate,
     draftStyle,
     draftColor,
+    draftStyles,
+    draftColors,
     draftOccasion,
     draftAvoid,
     setDraftDestination,
     setDraftDate,
     setDraftStyle,
-    setDraftColor,
-    setDraftOccasion,
-    setDraftAvoid,
+    setDraftStyles,
+    setDraftColors,
     draftDailyList,
     setDraftDailyList
   } = useAppStore();
@@ -48,10 +50,9 @@ const PlanPage: React.FC = () => {
   const destination: CityInfo = draftDestination || DEFAULT_CITY;
   const destSelected = Boolean(draftDestination);
   const dateSelected = Boolean(draftStartDate && draftEndDate);
-  const styleLabel = useMemo(
-    () => STYLE_OPTIONS.find((s) => s.key === draftStyle)?.label || '',
-    [draftStyle]
-  );
+  const styleLabels = useMemo(() => TRIP_STYLE_OPTIONS.filter((item) => draftStyles.includes(item.key)).map((item) => item.label), [draftStyles]);
+  const colorLabels = useMemo(() => TRIP_COLOR_OPTIONS.filter((item) => draftColors.includes(item.key)).map((item) => item.label), [draftColors]);
+  const styleLabel = styleLabels.join('、');
   const totalDays = dateSelected
     ? Math.round(
         (new Date(draftEndDate).getTime() - new Date(draftStartDate).getTime()) / 86400000,
@@ -66,10 +67,10 @@ const PlanPage: React.FC = () => {
 
   const missingRequired = useMemo(() => {
     if (!destSelected) return '目的地';
-    if (!styleLabel) return '穿搭风格';
+    if (!draftStyles.length) return '穿搭风格';
     if (!dateSelected) return '出行时间';
     return null;
-  }, [destSelected, styleLabel, dateSelected]);
+  }, [destSelected, draftStyles, dateSelected]);
 
   useEffect(() => {
     const dest = router.params?.destination;
@@ -101,8 +102,9 @@ const PlanPage: React.FC = () => {
       startDate: draftStartDate,
       endDate: draftEndDate,
       style: draftStyle,
+      styles: draftStyles,
     });
-  }, [destSelected, draftStartDate, draftEndDate, draftStyle]);
+  }, [destSelected, draftStartDate, draftEndDate, draftStyle, draftStyles]);
 
   const canGoStep2 = !tripStepAction.disabled;
 
@@ -110,7 +112,7 @@ const PlanPage: React.FC = () => {
     if (!canGoStep2) {
       const tips = !destSelected
         ? '请先选择目的地'
-        : !draftStyle
+        : !draftStyles.length
           ? '请选择风格'
           : '请完善日期';
       Taro.showToast({ title: tips, icon: 'none' });
@@ -129,14 +131,14 @@ const PlanPage: React.FC = () => {
         destination,
         startDate: draftStartDate,
         endDate: draftEndDate,
-        stylePreference: styleLabel,
-        colorPreference: draftColor,
+        stylePreferences: styleLabels,
+        colorPreferences: colorLabels,
         avoidItems: draftAvoid,
         occasion: draftOccasion,
       });
       const result = await generateOutfitPlan(request, {
         onEvent: (event) => {
-          if (event.event === 'Message') setLoadingIdx((current) => Math.min(current + 1, 4));
+          setLoadingIdx((current) => getLoadingStepIndex(event, current));
         },
       });
       setDraftDailyList(result.dailyList);
@@ -164,6 +166,8 @@ const PlanPage: React.FC = () => {
     setGenerationError('');
     setDraftDestination(null);
     setDraftStyle('');
+    setDraftStyles([]);
+    setDraftColors([]);
     setDraftDate('', '');
     setDraftDailyList([]);
   };
@@ -296,12 +300,12 @@ const PlanPage: React.FC = () => {
           {/* 3 穿搭风格 */}
           <View className={styles.card}>
             {renderGroupHeader('3', '选择穿搭风格', styleLabel, Boolean(styleLabel))}
-            <StylePicker value={draftStyle} onChange={setDraftStyle} hideTitle />
-            <View className={styles.preferenceFields}>
-              <Input className={styles.preferenceInput} value={draftColor} placeholder="偏好色系（选填）" onInput={(e) => setDraftColor(e.detail.value)} />
-              <Input className={styles.preferenceInput} value={draftOccasion} placeholder="旅行场景，如城市漫步（选填）" onInput={(e) => setDraftOccasion(e.detail.value)} />
-              <Input className={styles.preferenceInput} value={draftAvoid} placeholder="不想穿的单品（选填）" onInput={(e) => setDraftAvoid(e.detail.value)} />
-            </View>
+            <PreferencePicker options={TRIP_STYLE_OPTIONS} values={draftStyles} onChange={setDraftStyles} />
+          </View>
+
+          <View className={styles.card}>
+            {renderGroupHeader('4', '选择喜好颜色', colorLabels.join('、'), Boolean(colorLabels.length))}
+            <PreferencePicker options={TRIP_COLOR_OPTIONS} values={draftColors} onChange={setDraftColors} />
           </View>
 
           <View className={styles.formActions}>
@@ -325,6 +329,8 @@ const PlanPage: React.FC = () => {
 
       {step === 2 && (
         <View className={styles.loadingWrap}>
+          <View className={`${styles.loadingFabric} ${styles.loadingFabricOne}`} />
+          <View className={`${styles.loadingFabric} ${styles.loadingFabricTwo}`} />
           {generationError ? (
             <EmptyState
               title="生成暂时中断"

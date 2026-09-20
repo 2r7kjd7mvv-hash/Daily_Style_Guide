@@ -1,0 +1,8 @@
+.grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18rpx; }
+.option { min-height: 112rpx; margin: 0; padding: 22rpx; display: flex; align-items: center; gap: 16rpx; text-align: left; border: 2rpx solid transparent; border-radius: 28rpx; background: #f4f3ed; color: #4c5350; transition: transform .45s cubic-bezier(.22,1,.36,1),background .45s,border-color .45s; }
+.option::after { border: 0; }
+.selected { background: #e4ebe5; border-color: rgba(113,135,122,.45); transform: translateY(-2rpx); }
+.copy { display: flex; flex-direction: column; gap: 7rpx; min-width: 0; }
+.label { font-size: 27rpx; font-weight: 600; line-height: 1.35; }
+.desc { color: #7b8580; font-size: 20rpx; line-height: 1.45; }
+.swatch { width: 38rpx; height: 38rpx; flex: 0 0 auto; border-radius: 50%; box-shadow: inset 0 0 0 2rpx rgba(255,255,255,.62); }

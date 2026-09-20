@@ -2,7 +2,8 @@ interface TripStepActionInput {
   hasDestination: boolean;
   startDate: string;
   endDate: string;
-  style: string;
+  style?: string;
+  styles?: readonly string[];
 }
 
 const DAY_MS = 86400000;
@@ -62,7 +63,7 @@ export function getTripStepAction(input: TripStepActionInput) {
       input.hasDestination &&
       input.startDate &&
       input.endDate &&
-      input.style
+      (input.styles ? input.styles.length > 0 : input.style)
     ),
   };
 }
